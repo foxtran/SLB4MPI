@@ -83,3 +83,18 @@ If `max_chunk_size` is not specified, the iteration range is divided into chunks
 ### `work_stealing`
 
 ### `runtime`
+
+
+## Notes about MPI implementations
+
+### OpenMPI
+
+`clean` call is synchonization point.
+
+### IntelMPI
+
+Load balancers `dynamic`, `guided`, `work_stealing` as well as `runtime` may have significant performance issues.
+
+### MPICH
+
+Not tested yet.
