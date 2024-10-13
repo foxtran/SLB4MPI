@@ -1,0 +1,37 @@
+cmake_minimum_required(VERSION 3.22)
+
+project(MPI_load_balancer
+  VERSION 0.0.0)
+
+option(ENABLE_Fortran "Enable Fortran-implemented load balancer" ON)
+option(WITH_MPI       "Enable MPI"                               OFF)
+
+if(ENABLE_Fortran)
+  enable_language(Fortran)
+endif()
+
+if(WITH_MPI)
+  find_package(MPI REQUIRED)
+  if(ENABLE_Fortran)
+    if(NOT MPI_Fortran_HAVE_F90_MODULE)
+      message(FATAL_ERROR "F90 MPI module not found!")
+    endif()
+  endif()
+  add_compile_definitions(WITH_MPI)
+endif()
+
+if(ENABLE_Fortran)
+  set(SOURCES_F)
+  add_subdirectory(src/Fortran)
+  add_library(MPIlb_f OBJECT ${SOURCES_F})
+  if(WITH_MPI)
+    target_link_libraries(MPIlb_f PUBLIC MPI::MPI_Fortran)
+  endif()
+  if("${CMAKE_Fortran_COMPILER_ID}" STREQUAL "GNU")
+    target_compile_options(MPIlb_f PRIVATE $<$<COMPILE_LANGUAGE:Fortran>:-cpp>)
+    target_compile_options(MPIlb_f PRIVATE $<$<COMPILE_LANGUAGE:Fortran>:-ffree-line-length-none>)
+    target_compile_options(MPIlb_f PRIVATE $<$<COMPILE_LANGUAGE:Fortran>:-fstrict-aliasing>)
+  else()
+    message(FATAL_ERROR "${CMAKE_Fortran_COMPILER_ID} compiler is not supported yet!")
+  endif()
+endif()
