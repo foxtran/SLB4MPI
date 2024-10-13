@@ -73,3 +73,13 @@ Iterations are divided into chunks of size `max_chunk_size`, and the chunks are 
 Each chunk contains `max_chunk_size` iterations, except for the chunk that contains the sequentially last iteration, which may have fewer iterations.
 If `min_chunk_size` is not specified, it has value `1`.
 If `max_chunk_size` is not specified, the iteration range is divided into chunks that are approximately equal in size, but no less than `min_chunk_size`.
+
+### `local_static`
+
+### `dynamic`
+
+### `guided`
+
+### `work_stealing`
+
+### `runtime`
