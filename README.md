@@ -93,7 +93,9 @@ If `max_chunk_size` is not specified, the iteration range is divided into chunks
 
 ### IntelMPI
 
-Load balancers `dynamic`, `guided`, `work_stealing` as well as `runtime` may have significant performance issues.
+- Load balancers `dynamic`, `guided`, `work_stealing` as well as `runtime` may have significant performance issues.
+- `MPI_Accumulate` is used instead of `MPI_Put`
+- `I_MPI_ASYNC_PROGRESS=1` leads to runtime fails.
 
 ### MPICH
 
