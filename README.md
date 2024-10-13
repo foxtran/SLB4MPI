@@ -13,7 +13,7 @@ Library requires C preprocessing of Fortran files as well as support of lines up
 For GFortran, the additional flags are `-cpp -ffree-line-length-none`.
 To enable MPI support, use `-DWITH_MPI`.
 
-Note: no ILP64 support.
+**NOTE:** no ILP64 support.
 
 
 ## API
@@ -52,7 +52,7 @@ After finishing loop, load balancer `lb` must be destroyed before next usage via
 call lb%clean()
 ```
 
-For `runtime` load balancer, default load balancer can be changed with `LBMPI_set_schedule` call in the following way:
+For `runtime` load balancer, default load balancer can be changed with `LBMPI_set_schedule` call in the following way before its initialization:
 ```fortran
 call LBMPI_set_schedule("guided")
 ```
