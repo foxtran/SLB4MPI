@@ -21,7 +21,7 @@ To enable MPI support, use `-DWITH_MPI`.
 ### Fortran
 
 All load balancers are available with `MPI_load_balancers` which provides `<load-balancer-type>_load_balancer_t` types.
-Each `<load-balancer-type>_load_balancer_t` implements abstract interface defined in [abstact_load_balancer.f90](src/Fortran/abstact_load_balancer.f90).
+Each `<load-balancer-type>_load_balancer_t` implements abstract interface defined in [abstract_load_balancer.f90](src/Fortran/abstract_load_balancer.f90).
 See possible `load-balancer-type`s in the next section.
 
 Type definition can be done in the following manner, for example:
