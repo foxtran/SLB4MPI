@@ -100,7 +100,7 @@ contains
     lb%upper_bound = upper_bound
     lb%min_chunk_size = 1
     if (present(min_chunk_size)) lb%min_chunk_size = min_chunk_size
-    lb%max_chunk_size = lb%upper_bound - lb%lower_bound + 1
+    lb%max_chunk_size = (lb%upper_bound - lb%lower_bound + 1) / lb%nprocs
     if (present(max_chunk_size)) lb%max_chunk_size = max_chunk_size
 
     if (present(min_chunk_size) .and. .not.present(max_chunk_size)) error stop "Both min and max chunk sizes must be (not) defined"
