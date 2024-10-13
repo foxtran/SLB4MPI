@@ -135,7 +135,9 @@ contains
     integer(8) :: t1, t2, cr
 #endif
 
+#ifdef DEBUG_LOCKS
     call system_clock(count_rate=cr)
+#endif
 
     to_compute = .false.
 
