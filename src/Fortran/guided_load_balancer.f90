@@ -89,7 +89,7 @@ contains
     call MPI_Win_lock(MPI_LOCK_EXCLUSIVE, lb%root, 0_MPI_INTEGER_KIND, lb%window, ierr)
     call MPI_Get(root_counter, 1_MPI_INTEGER_KIND, MPI_INTEGER8, lb%root, 0_MPI_ADDRESS_KIND, 1_MPI_INTEGER_KIND, MPI_INTEGER8, lb%window, ierr)
     call MPI_Win_flush(lb%root, lb%window, ierr)
-    associated_tasks = min(max((lb%upper_bound - root_counter) / lb%nprocs, lb%min_chunk_size), lb%max_chunk_size)
+    associated_tasks = min(max((lb%upper_bound - root_counter) / lb%nranks, lb%min_chunk_size), lb%max_chunk_size)
     call MPI_Fetch_and_op(associated_tasks, lower_bound, MPI_INTEGER8, lb%root, 0_MPI_ADDRESS_KIND, MPI_SUM, lb%window, ierr)
     call MPI_Win_unlock(lb%root, lb%window, ierr)
 #else

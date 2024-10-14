@@ -17,7 +17,7 @@ module abstract_load_balancer_m
     integer(MPI_INTEGER_KIND) :: communicator !< MPI communicator
     integer(MPI_INTEGER_KIND) :: rank         !< Rank of the process
     integer(MPI_INTEGER_KIND) :: root = 0     !< Rank of the root process
-    integer(MPI_INTEGER_KIND) :: nprocs       !< Number of processes (group size)
+    integer(MPI_INTEGER_KIND) :: nranks       !< Number of processes (group size)
     integer(8) :: lower_bound                 !< Lower bound of range
     integer(8) :: upper_bound                 !< Upper bound of range
     integer(8) :: min_chunk_size              !< Minimal chunk size for job
@@ -97,10 +97,10 @@ contains
 
 #ifdef WITH_MPI
     call MPI_Comm_rank(communicator, lb%rank, ierr)
-    call MPI_Comm_size(communicator, lb%nprocs, ierr)
+    call MPI_Comm_size(communicator, lb%nranks, ierr)
 #else
     lb%rank = 0
-    lb%nprocs = 1
+    lb%nranks = 1
 #endif
 
     lb%communicator = communicator
@@ -108,7 +108,7 @@ contains
     lb%upper_bound = upper_bound
     lb%min_chunk_size = 1
     if (present(min_chunk_size)) lb%min_chunk_size = min_chunk_size
-    lb%max_chunk_size = max((lb%upper_bound - lb%lower_bound + 1) / lb%nprocs, lb%min_chunk_size)
+    lb%max_chunk_size = max((lb%upper_bound - lb%lower_bound + 1) / lb%nranks, lb%min_chunk_size)
     if (present(max_chunk_size)) lb%max_chunk_size = max_chunk_size
 
     if (lb%min_chunk_size <= 0) error stop "Min chunk size must be greater than zero!"

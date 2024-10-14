@@ -38,8 +38,8 @@ contains
 
     call lb%default_initialize(communicator, lower_bound, upper_bound, min_chunk_size, max_chunk_size)
 
-    n_tasks = (upper_bound - lower_bound + 1) / lb%nprocs
-    extra_tasks = mod(upper_bound - lower_bound + 1, lb%nprocs)
+    n_tasks = (upper_bound - lower_bound + 1) / lb%nranks
+    extra_tasks = mod(upper_bound - lower_bound + 1, lb%nranks)
     if (n_tasks < min_chunk_size) then
         n_tasks = min_chunk_size
         extra_tasks = 0

@@ -58,7 +58,7 @@ contains
 
     lower_bound = lb%counter
     upper_bound = min(lower_bound + lb%max_chunk_size - 1, lb%upper_bound)
-    lb%counter = lb%counter + lb%max_chunk_size * lb%nprocs
+    lb%counter = lb%counter + lb%max_chunk_size * lb%nranks
 
     if (lower_bound > lb%upper_bound) to_compute = .false.
 
