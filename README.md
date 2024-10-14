@@ -103,6 +103,13 @@ If `max_chunk_size` is not specified, the value is determined as average number 
 
 ### `work_stealing`
 
+Iterations are divided into chunks of size `max_chunk_size`, and the chunks are assigned to the MPI ranks in the communicator in a continuous fashion in the order of the MPI rank.
+Each chunk contains `max_chunk_size` iterations, except for the chunk that contains the sequentially last iteration, which may have fewer iterations.
+If MPI rank finished its chunks, it starts to steal tasks from other MPI ranks in round-robin fashion in the order of MPI ranks.
+These chunks contains `min_chunk_size` iterations, except for the chunk that contains the sequentially last iteration, which may have fewer iterations for victim MPI rank.
+If `min_chunk_size` is not specified, it defaults to `1`.
+If `max_chunk_size` is not specified, the iteration range is divided into chunks that are approximately equal in size, but no less than `min_chunk_size`.
+
 ### `runtime`
 
 
