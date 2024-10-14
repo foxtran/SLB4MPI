@@ -5,15 +5,37 @@ A collection of simple load balancers for MPI made in OpenMP manner.
 
 ## Compilation process
 
-Manual compilation only in the following sequence:
-```text
-abstract_load_balancer.f90 dynamic_load_balancer.f90 guided_load_balancer.f90 local_static_load_balancer.f90 static_load_balancer.f90 work_stealing_load_balancer.f90 runtime_load_balancer.f90 MPI_load_balancers.f90
-```
-Library requires C preprocessing of Fortran files as well as support of lines up to 200 characters.
-For GFortran, the additional flags are `-cpp -ffree-line-length-none`.
-To enable MPI support, use `-DWITH_MPI`.
+The collection is assumed to be compiled in source tree of parent project with passing all flags from it.
+Additional flags, which are required for compiling of collection, are kept inside.
+Currently, only [CMake build system](https://cmake.org) is supported.
 
-**NOTE:** no ILP64 support.
+To use MPI-lb from your project, add the following lines into your `CMakeLists.txt` for fetching the library:
+```
+include(FetchContent)
+FetchContent_Declare(MPIlb
+    GIT_REPOSITORY https://github.com/foxtran/MPI-lb.git
+    GIT_TAG        origin/master
+)
+FetchContent_MakeAvailable(MPIlb)
+FetchContent_GetProperties(MPIlb SOURCE_DIR MPIlb_SOURCE_DIR)
+set(MPIlb_ENABLE_Fortran ON)
+set(MPIlb_WITH_MPI ON) # or OFF
+add_subdirectory(${MPIlb_SOURCE_DIR} ${MPIlb_SOURCE_DIR}-binary)
+```
+
+After this, you can link the library with your application or library:
+```
+target_link_libraries(<TARGET> PUBLIC MPIlb::MPIlb_f)
+```
+
+Useful flags, that changes behaviour of library:
+- `MPIlb_ENABLE_Fortran` enables/disables MPI load balancers for Fortran language
+- `MPIlb_WITH_MPI` enables/disables support of MPI for non-MPI builds
+
+See an example [here](examples/Fortran/CMakeLists.txt).
+
+
+**NOTE:** The library does not provide ILP64 support.
 
 
 ## API
@@ -140,8 +162,9 @@ The list of possible values passed as string:
 ### IntelMPI
 
 - Load balancers `dynamic`, `guided`, `work_stealing` as well as `runtime` may have significant performance issues.
-- `MPI_Accumulate` is used instead of `MPI_Put`
+- `MPI_Accumulate` is used instead of `MPI_Put`.
 - `I_MPI_ASYNC_PROGRESS=1` leads to runtime fails.
+- **NOTE:** no ILP64 support.
 
 ### MPICH
 
