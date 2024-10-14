@@ -8,12 +8,13 @@ module runtime_load_balancer_m
   implicit none
   private
 
+  integer, parameter :: ENV_LOAD_BALANCER = 0
   integer, parameter :: STATIC_LOAD_BALANCER = 1
   integer, parameter :: LOCAL_STATIC_LOAD_BALANCER = 2
   integer, parameter :: DYNAMIC_LOAD_BALANCER = 3
   integer, parameter :: GUIDED_LOAD_BALANCER = 4
   integer, parameter :: WORK_STEALING_LOAD_BALANCER = 5
-  integer :: load_balancer_type = STATIC_LOAD_BALANCER
+  integer :: load_balancer_type = ENV_LOAD_BALANCER
 
   type, extends(load_balancer_t) :: runtime_load_balancer_t
     class(load_balancer_t), allocatable :: balancer
@@ -46,6 +47,25 @@ contains
     integer(MPI_INTEGER_KIND),      intent(in)    :: communicator
     integer(8),                     intent(in)    :: lower_bound, upper_bound
     integer(8),           optional, intent(in)    :: min_chunk_size, max_chunk_size
+
+    if (load_balancer_type == ENV_LOAD_BALANCER) then
+    block
+      use, intrinsic :: iso_fortran_env, only: error_unit
+      character(len=80) :: envval
+      logical :: ok
+      call get_environment_variable("MPIlb_LOAD_BALANCER", envval)
+      call LBMPI_set_schedule(trim(envval), ok)
+      if (len_trim(envval) /= 0 .and. (.not.ok .or. trim(envval) == 'env')) then
+        write(error_unit, '(A)') "MPIlb_LOAD_BALANCER environmental variable is not set properly!"
+        write(error_unit, '(A)') "Actual value is '" // trim(envval) // "'"
+        write(error_unit, '(A)') "Possible values are: static, local_static, dynamic, guided, work_stealing"
+        write(error_unit, '(A)') "static load balancer will be used!"
+        call LBMPI_set_schedule("static")
+      else if (len_trim(envval) == 0) then
+        call LBMPI_set_schedule("static")
+      end if
+    end block
+    end if
 
     select case (load_balancer_type)
       case(STATIC_LOAD_BALANCER)
@@ -104,6 +124,8 @@ contains
     logical :: ok_
     ok_ = .true.
     select case(lbtype)
+      case ("env")
+        load_balancer_type = ENV_LOAD_BALANCER
       case ("static")
         load_balancer_type = STATIC_LOAD_BALANCER
       case ("local_static")
