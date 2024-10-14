@@ -111,9 +111,6 @@ contains
     lb%max_chunk_size = max((lb%upper_bound - lb%lower_bound + 1) / lb%nprocs, lb%min_chunk_size)
     if (present(max_chunk_size)) lb%max_chunk_size = max_chunk_size
 
-    if (present(min_chunk_size) .and. .not.present(max_chunk_size)) error stop "Both min and max chunk sizes must be (not) defined"
-    if (.not.present(min_chunk_size) .and. present(max_chunk_size)) error stop "Both min and max chunk sizes must be (not) defined"
-
     if (lb%min_chunk_size <= 0) error stop "Min chunk size must be greater than zero!"
 
     if (lb%lower_bound > lb%upper_bound) error stop "Upper bound is less than lower bound!"
