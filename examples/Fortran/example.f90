@@ -14,7 +14,7 @@ program main
 #ifdef WITH_MPI
   call MPI_init(mpierr)
 #endif
-  call LBMPI_set_schedule("work_stealing")
+  call LBMPI_set_schedule("env")
   call lb%initialize(MPI_COMM_WORLD, 1_8, 100_8, 2_8, 4_8)
   do
     if (.not.lb%get_range(bot, top)) exit
