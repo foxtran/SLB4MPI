@@ -1,4 +1,4 @@
-module runtime_load_balancer_m
+module SLB4MPI_runtime_load_balancer_m
   use abstract_load_balancer_m
   use static_load_balancer_m
   use local_static_load_balancer_m
@@ -53,10 +53,10 @@ contains
       use, intrinsic :: iso_fortran_env, only: error_unit
       character(len=80) :: envval
       logical :: ok
-      call get_environment_variable("MPIlb_LOAD_BALANCER", envval)
+      call get_environment_variable("SLB4MPI_LOAD_BALANCER", envval)
       call LBMPI_set_schedule(trim(envval), ok)
       if (len_trim(envval) /= 0 .and. (.not.ok .or. trim(envval) == 'env')) then
-        write(error_unit, '(A)') "MPIlb_LOAD_BALANCER environmental variable is not set properly!"
+        write(error_unit, '(A)') "SLB4MPI_LOAD_BALANCER environmental variable is not set properly!"
         write(error_unit, '(A)') "Actual value is '" // trim(envval) // "'"
         write(error_unit, '(A)') "Possible values are: static, local_static, dynamic, guided, work_stealing"
         write(error_unit, '(A)') "static load balancer will be used!"
@@ -141,4 +141,4 @@ contains
     end select
     if (present(ok)) ok = ok_
   end subroutine LBMPI_set_schedule
-end module runtime_load_balancer_m
+end module SLB4MPI_runtime_load_balancer_m

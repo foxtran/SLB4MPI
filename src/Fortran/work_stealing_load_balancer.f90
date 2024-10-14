@@ -1,5 +1,5 @@
-module work_stealing_load_balancer_m
-#ifdef WITH_MPI
+module SLB4MPI_work_stealing_load_balancer_m
+#ifdef SLB4MPI_WITH_MPI
   use mpi
 #endif
   use abstract_load_balancer_m
@@ -7,7 +7,7 @@ module work_stealing_load_balancer_m
   private
 
   type, extends(load_balancer_t) :: work_stealing_load_balancer_t
-#ifdef WITH_MPI
+#ifdef SLB4MPI_WITH_MPI
     integer(MPI_INTEGER_KIND) :: window_num_active  !< number of active threads
     integer(MPI_INTEGER_KIND) :: window_bounds      !< lower and upper bounds of rank
     integer(MPI_INTEGER_KIND) :: window_actual_rank !< actual rank to compute (for fast look up)
@@ -96,7 +96,7 @@ contains
     lb%lower_bound = min(lb%lower_bound, upper_bound + 1)
     lb%upper_bound = min(lb%upper_bound, upper_bound)
 
-#ifdef WITH_MPI
+#ifdef SLB4MPI_WITH_MPI
     lb%actual_rank = lb%rank
 
     call MPI_Win_allocate(size_num_active, disp_unit_num_active, MPI_INFO_NULL, lb%communicator, baseaddr_num_active, lb%window_num_active, ierr)
@@ -135,17 +135,17 @@ contains
     integer(MPI_INTEGER_KIND) :: ierr
     integer(MPI_INTEGER_KIND) :: num_active
     integer(8) :: bounds(2), hop_count, nohop_count
-#ifdef DEBUG_LOCKS
+#ifdef SLB4MPI_DEBUG_LOCKS
     integer(8) :: t1, t2, cr
 #endif
 
-#ifdef DEBUG_LOCKS
+#ifdef SLB4MPI_DEBUG_LOCKS
     call system_clock(count_rate=cr)
 #endif
 
     to_compute = .false.
 
-#ifndef WITH_MPI
+#ifndef SLB4MPI_WITH_MPI
 
     lower_bound = lb%counter
     upper_bound = min(lower_bound + lb%max_chunk_size - 1, lb%upper_bound)
@@ -165,7 +165,7 @@ contains
         lower_bound = lb%lower_bound
         upper_bound = min(lower_bound + lb%max_chunk_size - 1, lb%upper_bound)
         bounds = [ upper_bound + 1, lb%upper_bound ]
-#ifdef DEBUG_RANGES
+#ifdef SLB4MPI_DEBUG_RANGES
         print '(A,I0,A,I0,A,I0)', 'Thr ', lb%rank, ' computes range from ', lower_bound, ' to ', upper_bound
 #endif
         !> update lower bound
@@ -190,11 +190,11 @@ contains
             integer(MPI_INTEGER_KIND) :: compute_rank
             logical :: done
             !> get rank which computes lb%actual_rank
-#ifdef DEBUG_LOCKS
+#ifdef SLB4MPI_DEBUG_LOCKS
             call system_clock(count=t1)
 #endif
             call MPI_Win_lock(MPI_LOCK_SHARED, lb%actual_rank, MPI_MODE_NOCHECK, lb%window_actual_rank, ierr)
-#ifdef DEBUG_LOCKS
+#ifdef SLB4MPI_DEBUG_LOCKS
             call system_clock(count=t2)
             print '(A,I0,A,I0)', 'lock0, MPI: ', lb%rank, ' delay: ', t2-t1
 #endif
@@ -203,11 +203,11 @@ contains
             !> check that compute_rank computes itself
             if (lb%actual_rank == compute_rank) then
                 !> check that there is something to steal
-#ifdef DEBUG_LOCKS
+#ifdef SLB4MPI_DEBUG_LOCKS
                 call system_clock(count=t1)
 #endif
                 call MPI_Win_lock(MPI_LOCK_SHARED, lb%actual_rank, MPI_MODE_NOCHECK, lb%window_done, ierr)
-#ifdef DEBUG_LOCKS
+#ifdef SLB4MPI_DEBUG_LOCKS
                 call system_clock(count=t2)
                 print '(A,I0,A,I0)', 'lock1, MPI: ', lb%rank, ' delay: ', t2-t1
 #endif
@@ -215,11 +215,11 @@ contains
                 call MPI_Win_unlock(lb%actual_rank, lb%window_done, ierr)
                 if (.not.done) then
                     !> try to steal min_chunk_size jobs from compute_rank
-#ifdef DEBUG_LOCKS
+#ifdef SLB4MPI_DEBUG_LOCKS
                     call system_clock(count=t1)
 #endif
                     call MPI_Win_lock(MPI_LOCK_EXCLUSIVE, compute_rank, 0_MPI_INTEGER_KIND, lb%window_bounds, ierr)
-#ifdef DEBUG_LOCKS
+#ifdef SLB4MPI_DEBUG_LOCKS
                     call system_clock(count=t2)
                     print '(A,I0,A,I0)', 'lock2, MPI: ', lb%rank, ' delay: ', t2-t1
 #endif
@@ -229,7 +229,7 @@ contains
                     lower_bound = max(bounds(1), bounds(2) - lb%min_chunk_size + 1)
                     bounds = [ bounds(1), lower_bound - 1 ]
                     if (lower_bound <= upper_bound) to_compute = .true.
-#ifdef DEBUG_RANGES
+#ifdef SLB4MPI_DEBUG_RANGES
                     if (to_compute) then
                         print '(A,I0,A,I0,A,I0,A,I0)', 'Thr ', lb%rank, ' steals range from ', lower_bound, ' to ', upper_bound, ' from ', compute_rank
                         print '(A,2I8)', 'new bounds: ', bounds
@@ -244,7 +244,7 @@ contains
                 end if
             else
                 !> switch to lb%actual_rank of compute_rank
-#ifdef DEBUG_RANGES
+#ifdef SLB4MPI_DEBUG_RANGES
                 print '(A,I0)', 'hop MPI: ', lb%rank
 #endif
                 lb%actual_rank = compute_rank
@@ -259,15 +259,15 @@ contains
                     if (randval > 1._4 / log(real(lb%nranks, kind=4)) .and. hop_count < 20) cycle
                 end block
             end if
-#ifdef DEBUG_RANGES
+#ifdef SLB4MPI_DEBUG_RANGES
             print '(A,I0)', 'no-hop MPI: ', lb%rank
 #endif
             !> if could not steal job, check how many threads finished job
-#ifdef DEBUG_LOCKS
+#ifdef SLB4MPI_DEBUG_LOCKS
             call system_clock(count=t1)
 #endif
             call MPI_Win_lock(MPI_LOCK_SHARED, lb%root, 0_MPI_INTEGER_KIND, lb%window_num_active, ierr)
-#ifdef DEBUG_LOCKS
+#ifdef SLB4MPI_DEBUG_LOCKS
             call system_clock(count=t2)
             print '(A,I0,A,I0)', 'lock3, MPI: ', lb%rank, ' delay: ', t2-t1
 #endif
@@ -291,7 +291,7 @@ contains
     class(work_stealing_load_balancer_t), intent(inout) :: lb
     integer(MPI_INTEGER_KIND) :: ierr
 
-#ifdef WITH_MPI
+#ifdef SLB4MPI_WITH_MPI
     if (lb%window_num_active /= MPI_WIN_NULL) then
       call MPI_Win_free(lb%window_num_active, ierr)
     end if
@@ -306,4 +306,4 @@ contains
     end if
 #endif
   end subroutine clean
-end module work_stealing_load_balancer_m
+end module SLB4MPI_work_stealing_load_balancer_m

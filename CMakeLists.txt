@@ -1,44 +1,52 @@
 cmake_minimum_required(VERSION 3.22)
 
-project(MPI_load_balancer
-  VERSION 0.0.0)
+project(SLB4MPI
+  VERSION 0.0.0
+  DESCRIPTION "Simple load balancers for MPI")
 
-option(MPIlb_ENABLE_Fortran "Enable Fortran-implemented load balancer" OFF)
-option(MPIlb_WITH_MPI       "Enable MPI"                               OFF)
+option(SLB4MPI_ENABLE_Fortran "Enable Fortran-implemented load balancer" OFF)
+option(SLB4MPI_WITH_MPI       "Enable MPI"                               OFF)
 
-if(MPIlb_ENABLE_Fortran)
+if(SLB4MPI_ENABLE_Fortran)
   enable_language(Fortran)
 endif()
 
-if(MPIlb_WITH_MPI)
+if(SLB4MPI_WITH_MPI)
   find_package(MPI REQUIRED)
-  if(MPIlb_ENABLE_Fortran)
+  if(SLB4MPI_ENABLE_Fortran)
     if(NOT MPI_Fortran_HAVE_F90_MODULE)
       message(FATAL_ERROR "F90 MPI module not found!")
     endif()
   endif()
 endif()
 
-if(MPIlb_ENABLE_Fortran AND NOT TARGET MPIlb::MPIlb_f)
+if(SLB4MPI_ENABLE_Fortran AND NOT TARGET SLB4MPI::SLB4MPI_Fortran)
   set(SOURCES_F)
   add_subdirectory(src/Fortran)
-  add_library(MPIlb_f OBJECT ${SOURCES_F})
-  set_target_properties(MPIlb_f PROPERTIES INCLUDE_DIRECTORIES ${CMAKE_BINARY_DIR}/MPIlb/MPIlb_f/
-                                           Fortran_MODULE_DIRECTORY ${CMAKE_BINARY_DIR}/MPIlb/MPIlb_f/
+  add_library(SLB4MPI__SLB4MPI_f OBJECT ${SOURCES_F})
+  set_target_properties(SLB4MPI__SLB4MPI_f PROPERTIES INCLUDE_DIRECTORIES ${CMAKE_BINARY_DIR}/SLB4MPI/Fortran/
+                                                      Fortran_MODULE_DIRECTORY ${CMAKE_BINARY_DIR}/SLB4MPI/Fortran/
   )
-  target_include_directories(MPIlb_f PUBLIC ${CMAKE_BINARY_DIR}/MPIlb/MPIlb_f/)
-  if(MPIlb_WITH_MPI)
-    target_compile_definitions(MPIlb_f PRIVATE WITH_MPI)
-    target_link_libraries(MPIlb_f PUBLIC MPI::MPI_Fortran)
+  target_include_directories(SLB4MPI__SLB4MPI_f PUBLIC ${CMAKE_BINARY_DIR}/SLB4MPI/Fortran/)
+  if(SLB4MPI_WITH_MPI)
+    target_compile_definitions(SLB4MPI__SLB4MPI_f PRIVATE SLB4MPI_WITH_MPI)
+    target_link_libraries(SLB4MPI__SLB4MPI_f PUBLIC MPI::MPI_Fortran)
   endif()
   if("${CMAKE_Fortran_COMPILER_ID}" STREQUAL "GNU")
-    target_compile_options(MPIlb_f PRIVATE $<$<COMPILE_LANGUAGE:Fortran>:-cpp>)
-    target_compile_options(MPIlb_f PRIVATE $<$<COMPILE_LANGUAGE:Fortran>:-ffree-line-length-none>)
-    target_compile_options(MPIlb_f PRIVATE $<$<COMPILE_LANGUAGE:Fortran>:-fstrict-aliasing>)
+    target_compile_options(SLB4MPI__SLB4MPI_f PRIVATE $<$<COMPILE_LANGUAGE:Fortran>:-cpp>)
+    target_compile_options(SLB4MPI__SLB4MPI_f PRIVATE $<$<COMPILE_LANGUAGE:Fortran>:-ffree-line-length-none>)
+  elseif("${CMAKE_Fortran_COMPILER_ID}" STREQUAL "Flang")
+    target_compile_options(SLB4MPI__SLB4MPI_f PRIVATE $<$<COMPILE_LANGUAGE:Fortran>:-cpp>)
+  elseif("${CMAKE_Fortran_COMPILER_ID}" STREQUAL "Intel")
+    target_compile_options(SLB4MPI__SLB4MPI_f PRIVATE $<$<COMPILE_LANGUAGE:Fortran>:-cpp>)
   elseif("${CMAKE_Fortran_COMPILER_ID}" STREQUAL "IntelLLVM")
-    target_compile_options(MPIlb_f PRIVATE $<$<COMPILE_LANGUAGE:Fortran>:-cpp>)
+    target_compile_options(SLB4MPI__SLB4MPI_f PRIVATE $<$<COMPILE_LANGUAGE:Fortran>:-cpp>)
+  elseif("${CMAKE_Fortran_COMPILER_ID}" STREQUAL "NVHPC")
+    target_compile_options(SLB4MPI__SLB4MPI_f PRIVATE $<$<COMPILE_LANGUAGE:Fortran>:-Mpreprocess>)
+  elseif("${CMAKE_Fortran_COMPILER_ID}" MATCHES "Cray")
+    target_compile_options(SLB4MPI__SLB4MPI_f PRIVATE $<$<COMPILE_LANGUAGE:Fortran>:-eF>) # Enable preprocessor
   else()
     message(FATAL_ERROR "${CMAKE_Fortran_COMPILER_ID} compiler is not supported yet!")
   endif()
-  add_library(MPIlb::MPIlb_f ALIAS MPIlb_f)
+  add_library(SLB4MPI::SLB4MPI_Fortran ALIAS SLB4MPI__SLB4MPI_f)
 endif()

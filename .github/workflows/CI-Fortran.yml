@@ -34,21 +34,21 @@ jobs:
     - name: Tests without MPI
       if: matrix.WITH_MPI == 'OFF'
       run: |
-        build/MPIlb_f_example
-        MPIlb_LOAD_BALANCER=static        build/MPIlb_f_example
-        MPIlb_LOAD_BALANCER=local_static  build/MPIlb_f_example
-        MPIlb_LOAD_BALANCER=dynamic       build/MPIlb_f_example
-        MPIlb_LOAD_BALANCER=guided        build/MPIlb_f_example
-        MPIlb_LOAD_BALANCER=work_stealing build/MPIlb_f_example
-        MPIlb_LOAD_BALANCER=dinamic       build/MPIlb_f_example
+        build/SLB4MPI_f_example
+        SLB4MPI_LOAD_BALANCER=static        build/SLB4MPI_f_example
+        SLB4MPI_LOAD_BALANCER=local_static  build/SLB4MPI_f_example
+        SLB4MPI_LOAD_BALANCER=dynamic       build/SLB4MPI_f_example
+        SLB4MPI_LOAD_BALANCER=guided        build/SLB4MPI_f_example
+        SLB4MPI_LOAD_BALANCER=work_stealing build/SLB4MPI_f_example
+        SLB4MPI_LOAD_BALANCER=dinamic       build/SLB4MPI_f_example
 
     - name: Tests with MPI
       if: matrix.WITH_MPI == 'ON'
       run: |
-        mpirun -n 2 --oversubscribe build/MPIlb_f_example
-        MPIlb_LOAD_BALANCER=static        mpirun -n 2 --oversubscribe build/MPIlb_f_example
-        MPIlb_LOAD_BALANCER=local_static  mpirun -n 2 --oversubscribe build/MPIlb_f_example
-        MPIlb_LOAD_BALANCER=dynamic       mpirun -n 2 --oversubscribe build/MPIlb_f_example
-        MPIlb_LOAD_BALANCER=guided        mpirun -n 2 --oversubscribe build/MPIlb_f_example
-        MPIlb_LOAD_BALANCER=work_stealing mpirun -n 2 --oversubscribe build/MPIlb_f_example
-        MPIlb_LOAD_BALANCER=dinamic       mpirun -n 2 --oversubscribe build/MPIlb_f_example
+        mpirun -n 2 --oversubscribe build/SLB4MPI_f_example
+        SLB4MPI_LOAD_BALANCER=static        mpirun -n 2 --oversubscribe build/SLB4MPI_f_example
+        SLB4MPI_LOAD_BALANCER=local_static  mpirun -n 2 --oversubscribe build/SLB4MPI_f_example
+        SLB4MPI_LOAD_BALANCER=dynamic       mpirun -n 2 --oversubscribe build/SLB4MPI_f_example
+        SLB4MPI_LOAD_BALANCER=guided        mpirun -n 2 --oversubscribe build/SLB4MPI_f_example
+        SLB4MPI_LOAD_BALANCER=work_stealing mpirun -n 2 --oversubscribe build/SLB4MPI_f_example
+        SLB4MPI_LOAD_BALANCER=dinamic       mpirun -n 2 --oversubscribe build/SLB4MPI_f_example

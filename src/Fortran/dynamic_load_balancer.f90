@@ -1,5 +1,5 @@
-module dynamic_load_balancer_m
-#ifdef WITH_MPI
+module SLB4MPI_dynamic_load_balancer_m
+#ifdef SLB4MPI_WITH_MPI
   use mpi
 #endif
   use abstract_load_balancer_m
@@ -7,7 +7,7 @@ module dynamic_load_balancer_m
   private
 
   type, extends(load_balancer_t) :: dynamic_load_balancer_t
-#ifdef WITH_MPI
+#ifdef SLB4MPI_WITH_MPI
     integer(MPI_INTEGER_KIND) :: window
 #else
     integer(MPI_INTEGER_KIND) :: counter
@@ -51,7 +51,7 @@ contains
 
     call lb%default_initialize(communicator, lower_bound, upper_bound, min_chunk_size, max_chunk_size)
 
-#ifdef WITH_MPI
+#ifdef SLB4MPI_WITH_MPI
     call MPI_Win_allocate(size, disp_unit, MPI_INFO_NULL, lb%communicator, baseaddr, lb%window, ierr)
 
     if (lb%rank == lb%root) then
@@ -84,7 +84,7 @@ contains
 
     to_compute = .true.
 
-#ifdef WITH_MPI
+#ifdef SLB4MPI_WITH_MPI
     call MPI_Win_lock(MPI_LOCK_EXCLUSIVE, lb%root, 0_MPI_INTEGER_KIND, lb%window, ierr)
     call MPI_Fetch_and_op(lb%min_chunk_size, lower_bound, MPI_INTEGER8, lb%root, 0_MPI_ADDRESS_KIND, MPI_SUM, lb%window, ierr)
     call MPI_Win_unlock(lb%root, lb%window, ierr)
@@ -106,10 +106,10 @@ contains
     class(dynamic_load_balancer_t), intent(inout) :: lb
     integer(MPI_INTEGER_KIND) :: ierr
 
-#ifdef WITH_MPI
+#ifdef SLB4MPI_WITH_MPI
     if (lb%window /= MPI_WIN_NULL) then
       call MPI_Win_free(lb%window, ierr)
     end if
 #endif
   end subroutine clean
-end module dynamic_load_balancer_m
+end module SLB4MPI_dynamic_load_balancer_m
