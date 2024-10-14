@@ -4,7 +4,7 @@ project(MPI_load_balancer_example
   VERSION 0.0.0
   LANGUAGES Fortran)
 
-option(WITH_MPI       "Enable MPI"                               OFF)
+option(WITH_MPI "Enable MPI" OFF)
 
 if(WITH_MPI)
   add_compile_definitions(WITH_MPI)
@@ -13,7 +13,7 @@ endif()
 include(FetchContent)
 FetchContent_Declare(SLB4MPI
     GIT_REPOSITORY https://github.com/foxtran/SLB4MPI.git
-    GIT_TAG        origin/rename/final
+    GIT_TAG        origin/master
 )
 FetchContent_MakeAvailable(SLB4MPI)
 FetchContent_GetProperties(SLB4MPI SOURCE_DIR SLB4MPI_SOURCE_DIR)
