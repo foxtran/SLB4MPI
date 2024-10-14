@@ -1,5 +1,7 @@
 program main
+#ifdef WITH_MPI
   use MPI
+#endif
   use MPI_load_balancers
   implicit none
   type(runtime_load_balancer_t) :: lb
