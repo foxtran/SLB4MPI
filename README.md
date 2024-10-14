@@ -1,6 +1,6 @@
 # MPI-lb
 
-OpenMP-like load balancers for MPI
+A collection of simple load balancers for MPI made in OpenMP manner.
 
 
 ## Compilation process
