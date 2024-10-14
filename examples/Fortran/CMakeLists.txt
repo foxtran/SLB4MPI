@@ -13,7 +13,7 @@ endif()
 include(FetchContent)
 FetchContent_Declare(MPIlb
     GIT_REPOSITORY https://github.com/foxtran/MPI-lb.git
-    GIT_TAG        origin/feature/cmake_build_system
+    GIT_TAG        origin/master
 )
 FetchContent_MakeAvailable(MPIlb)
 FetchContent_GetProperties(MPIlb SOURCE_DIR MPIlb_SOURCE_DIR)
