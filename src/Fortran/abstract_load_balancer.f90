@@ -96,8 +96,8 @@ contains
     integer(MPI_INTEGER_KIND) :: ierr
 
 #ifdef WITH_MPI
-    call MPI_Comm_rank(lb%communicator, lb%rank, ierr)
-    call MPI_Comm_size(lb%communicator, lb%nprocs, ierr)
+    call MPI_Comm_rank(communicator, lb%rank, ierr)
+    call MPI_Comm_size(communicator, lb%nprocs, ierr)
 #else
     lb%rank = 0
     lb%nprocs = 1
