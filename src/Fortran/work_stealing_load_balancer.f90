@@ -66,7 +66,7 @@ contains
 
     size_num_active = storage_size(lb%nprocs) / BITS_IN_BYTE
     disp_unit_num_active = size_num_active
-    size_actual_rank = storage_size(lb%actual_rank) / BITS_IN_BYTE
+    size_actual_rank = storage_size(lb%rank) / BITS_IN_BYTE
     disp_unit_actual_rank = size_actual_rank
     size_bounds = 400 ! storage_size(bounds) / BITS_IN_BYTE * 2
     disp_unit_bounds = 1 ! size_bounds / 2
