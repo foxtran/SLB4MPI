@@ -11,6 +11,7 @@ module work_stealing_load_balancer_m
     integer(MPI_INTEGER_KIND) :: window_num_active  !< number of active threads
     integer(MPI_INTEGER_KIND) :: window_bounds      !< lower and upper bounds of rank
     integer(MPI_INTEGER_KIND) :: window_actual_rank !< actual rank to compute (for fast look up)
+    integer(MPI_INTEGER_KIND) :: window_done        !< status of thread
     integer(MPI_INTEGER_KIND) :: actual_rank
     logical :: done = .false.
 #else
@@ -61,6 +62,10 @@ contains
     type(c_ptr) :: baseaddr_bounds
     integer(8), pointer :: bounds(:)
     integer(8), parameter :: bounds_2 = 0
+    ! done
+    integer(MPI_ADDRESS_KIND) :: size_done
+    integer(MPI_INTEGER_KIND) :: disp_unit_done
+    logical, parameter :: done = .false.
 
     size_num_active = storage_size(lb%nprocs) / BITS_IN_BYTE
     disp_unit_num_active = size_num_active
@@ -68,6 +73,8 @@ contains
     disp_unit_actual_rank = size_actual_rank
     size_bounds = storage_size(bounds_2) / BITS_IN_BYTE * 2
     disp_unit_bounds = size_bounds / 2
+    size_done = storage_size(done) / BITS_IN_BYTE
+    disp_unit_done = size_done
 
     call lb%default_initialize(communicator, lower_bound, upper_bound, min_chunk_size, max_chunk_size)
 
@@ -95,6 +102,7 @@ contains
     call MPI_Win_allocate(size_num_active, disp_unit_num_active, MPI_INFO_NULL, lb%communicator, baseaddr_num_active, lb%window_num_active, ierr)
     call MPI_Win_create(lb%actual_rank, size_actual_rank, disp_unit_actual_rank, MPI_INFO_NULL, lb%communicator, lb%window_actual_rank, ierr)
     call MPI_Win_allocate(size_bounds, disp_unit_bounds, MPI_INFO_NULL, lb%communicator, baseaddr_bounds, lb%window_bounds, ierr)
+    call MPI_Win_create(lb%done, size_done, disp_unit_done, MPI_INFO_NULL, lb%communicator, lb%window_done, ierr)
 
     if (lb%rank == lb%root) then
       call c_f_pointer(baseaddr_num_active, num_active)
@@ -180,6 +188,7 @@ contains
     do while (.not.to_compute)
         block
             integer(MPI_INTEGER_KIND) :: compute_rank
+            logical :: done
             !> get rank which computes lb%actual_rank
 #ifdef DEBUG_LOCKS
             call system_clock(count=t1)
@@ -193,33 +202,46 @@ contains
             call MPI_Win_unlock(lb%actual_rank, lb%window_actual_rank, ierr)
             !> check that compute_rank computes itself
             if (lb%actual_rank == compute_rank) then
-                !> try to steal min_chunk_size jobs from compute_rank
+                !> check that there is something to steal
 #ifdef DEBUG_LOCKS
                 call system_clock(count=t1)
 #endif
-                call MPI_Win_lock(MPI_LOCK_EXCLUSIVE, compute_rank, 0_MPI_INTEGER_KIND, lb%window_bounds, ierr)
+                call MPI_Win_lock(MPI_LOCK_SHARED, lb%actual_rank, MPI_MODE_NOCHECK, lb%window_done, ierr)
 #ifdef DEBUG_LOCKS
                 call system_clock(count=t2)
                 print '(A,I0,A,I0)', 'lock1, MPI: ', lb%rank, ' delay: ', t2-t1
 #endif
-                call MPI_Get(bounds, 2_MPI_INTEGER_KIND, MPI_INTEGER8, compute_rank, 0_MPI_ADDRESS_KIND, 2_MPI_INTEGER_KIND, MPI_INTEGER8, lb%window_bounds, ierr)
-                call MPI_Win_flush(compute_rank, lb%window_bounds, ierr)
-                upper_bound = bounds(2)
-                lower_bound = max(bounds(1), bounds(2) - lb%min_chunk_size + 1)
-                bounds = [ bounds(1), lower_bound - 1 ]
-                if (lower_bound <= upper_bound) to_compute = .true.
-#ifdef DEBUG_RANGES
-                if (to_compute) then
-                    print '(A,I0,A,I0,A,I0,A,I0)', 'Thr ', lb%rank, ' steals range from ', lower_bound, ' to ', upper_bound, ' from ', compute_rank
-                    print '(A,2I8)', 'new bounds: ', bounds
-                end if
+                call MPI_Get(done, 1_MPI_INTEGER_KIND, MPI_LOGICAL, lb%actual_rank, 0_MPI_ADDRESS_KIND, 1_MPI_INTEGER_KIND, MPI_LOGICAL, lb%window_done, ierr)
+                call MPI_Win_unlock(lb%actual_rank, lb%window_done, ierr)
+                if (.not.done) then
+                    !> try to steal min_chunk_size jobs from compute_rank
+#ifdef DEBUG_LOCKS
+                    call system_clock(count=t1)
 #endif
-                if (to_compute) then
-                    !> update upper bound
-                    call MPI_Accumulate(bounds, 2_MPI_INTEGER_KIND, MPI_INTEGER8, compute_rank, 0_MPI_ADDRESS_KIND, 2_MPI_INTEGER_KIND, MPI_INTEGER8, MPI_REPLACE, lb%window_bounds, ierr)
+                    call MPI_Win_lock(MPI_LOCK_EXCLUSIVE, compute_rank, 0_MPI_INTEGER_KIND, lb%window_bounds, ierr)
+#ifdef DEBUG_LOCKS
+                    call system_clock(count=t2)
+                    print '(A,I0,A,I0)', 'lock2, MPI: ', lb%rank, ' delay: ', t2-t1
+#endif
+                    call MPI_Get(bounds, 2_MPI_INTEGER_KIND, MPI_INTEGER8, compute_rank, 0_MPI_ADDRESS_KIND, 2_MPI_INTEGER_KIND, MPI_INTEGER8, lb%window_bounds, ierr)
+                    call MPI_Win_flush(compute_rank, lb%window_bounds, ierr)
+                    upper_bound = bounds(2)
+                    lower_bound = max(bounds(1), bounds(2) - lb%min_chunk_size + 1)
+                    bounds = [ bounds(1), lower_bound - 1 ]
+                    if (lower_bound <= upper_bound) to_compute = .true.
+#ifdef DEBUG_RANGES
+                    if (to_compute) then
+                        print '(A,I0,A,I0,A,I0,A,I0)', 'Thr ', lb%rank, ' steals range from ', lower_bound, ' to ', upper_bound, ' from ', compute_rank
+                        print '(A,2I8)', 'new bounds: ', bounds
+                    end if
+#endif
+                    if (to_compute) then
+                        !> update upper bound
+                        call MPI_Accumulate(bounds, 2_MPI_INTEGER_KIND, MPI_INTEGER8, compute_rank, 0_MPI_ADDRESS_KIND, 2_MPI_INTEGER_KIND, MPI_INTEGER8, MPI_REPLACE, lb%window_bounds, ierr)
+                    end if
+                    call MPI_Win_unlock(compute_rank, lb%window_bounds, ierr)
+                    if (to_compute) return
                 end if
-                call MPI_Win_unlock(compute_rank, lb%window_bounds, ierr)
-                if (to_compute) return
             else
                 !> switch to lb%actual_rank of compute_rank
 #ifdef DEBUG_RANGES
@@ -247,7 +269,7 @@ contains
             call MPI_Win_lock(MPI_LOCK_SHARED, lb%root, 0_MPI_INTEGER_KIND, lb%window_num_active, ierr)
 #ifdef DEBUG_LOCKS
             call system_clock(count=t2)
-            print '(A,I0,A,I0)', 'lock2, MPI: ', lb%rank, ' delay: ', t2-t1
+            print '(A,I0,A,I0)', 'lock3, MPI: ', lb%rank, ' delay: ', t2-t1
 #endif
             call MPI_Get(num_active, 1_MPI_INTEGER_KIND, MPI_INTEGER4, lb%root, 0_MPI_ADDRESS_KIND, 1_MPI_INTEGER_KIND, MPI_INTEGER4, lb%window_num_active, ierr)
             call MPI_Win_unlock(lb%root, lb%window_num_active, ierr)
@@ -278,6 +300,9 @@ contains
     end if
     if (lb%window_bounds /= MPI_WIN_NULL) then
       call MPI_Win_free(lb%window_bounds, ierr)
+    end if
+    if (lb%window_done /= MPI_WIN_NULL) then
+      call MPI_Win_free(lb%window_done, ierr)
     end if
 #endif
   end subroutine clean
