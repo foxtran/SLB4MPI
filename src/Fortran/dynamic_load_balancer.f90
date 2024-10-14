@@ -86,14 +86,14 @@ contains
 
 #ifdef WITH_MPI
     call MPI_Win_lock(MPI_LOCK_EXCLUSIVE, lb%root, 0_MPI_INTEGER_KIND, lb%window, ierr)
-    call MPI_Fetch_and_op(lb%max_chunk_size, lower_bound, MPI_INTEGER8, lb%root, 0_MPI_ADDRESS_KIND, MPI_SUM, lb%window, ierr)
+    call MPI_Fetch_and_op(lb%min_chunk_size, lower_bound, MPI_INTEGER8, lb%root, 0_MPI_ADDRESS_KIND, MPI_SUM, lb%window, ierr)
     call MPI_Win_unlock(lb%root, lb%window, ierr)
 #else
     lower_bound = lb%counter
-    lb%counter = lb%counter + lb%max_chunk_size
+    lb%counter = lb%counter + lb%min_chunk_size
 #endif
 
-    upper_bound = min(lower_bound + lb%max_chunk_size - 1, lb%upper_bound)
+    upper_bound = min(lower_bound + lb%min_chunk_size - 1, lb%upper_bound)
 
     if (lower_bound > lb%upper_bound) to_compute = .false.
 

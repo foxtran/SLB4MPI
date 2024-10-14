@@ -88,6 +88,10 @@ If `max_chunk_size` is not specified, the iteration range is divided into chunks
 
 ### `dynamic`
 
+Each MPI rank executes a chunk, then requests another chunk, until no chunks remain to be assigned.
+Each chunk contains `min_chunk_size` iterations, except for the chunk that contains the sequentially last iteration, which may have fewer iterations.
+If `min_chunk_size` is not specified, it defaults to `1`.
+
 ### `guided`
 
 ### `work_stealing`
