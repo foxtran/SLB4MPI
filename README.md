@@ -112,6 +112,24 @@ If `max_chunk_size` is not specified, the iteration range is divided into chunks
 
 ### `runtime`
 
+The load balancer is determing by `LBMPI_set_schedule` procedure.
+The list of possible values passed as string:
+- `env` (default) selects slice algorithm by `MPIlb_LOAD_BALANCER` environment variable;
+- `static` selects `static_load_balancer`;
+- `local_static` selects `local_static_load_balancer`;
+- `dynamic` selects `dynamic_load_balancer`;
+- `guided` selects `guided_load_balancer`;
+- `work_stealing` selects `work_stealing_load_balancer`.
+
+`MPIlb_LOAD_BALANCER` environment variable accepts the following values:
+- not set: runtime load balancer will use `static_load_balancer`
+- empty string: runtime load balancer will use `static_load_balancer`
+- `static`: runtime load balancer will use `static_load_balancer`
+- `local_static`: runtime load balancer will use `local_static_load_balancer`
+- `dynamic`: runtime load balancer will use `dynamic_load_balancer`
+- `guided`: runtime load balancer will use `guided_load_balancer`
+- `work_stealing`: runtime load balancer will use `work_stealling_load_balancer`
+- other values: runtime load balancer will use `static_load_balancer`
 
 ## Notes about MPI implementations
 
