@@ -10,7 +10,7 @@ Additional flags, which are required for compiling of collection, are kept insid
 Currently, only [CMake build system](https://cmake.org) is supported.
 
 To use MPI-lb from your project, add the following lines into your `CMakeLists.txt` for fetching the library:
-```
+```cmake
 include(FetchContent)
 FetchContent_Declare(MPIlb
     GIT_REPOSITORY https://github.com/foxtran/MPI-lb.git
@@ -24,13 +24,13 @@ add_subdirectory(${MPIlb_SOURCE_DIR} ${MPIlb_SOURCE_DIR}-binary)
 ```
 
 After this, you can link the library with your application or library:
-```
+```cmake
 target_link_libraries(<TARGET> PUBLIC MPIlb::MPIlb_f)
 ```
 
-Useful flags, that changes behaviour of library:
+Useful flags that changes behaviour of library:
 - `MPIlb_ENABLE_Fortran` enables/disables MPI load balancers for Fortran language
-- `MPIlb_WITH_MPI` enables/disables support of MPI for non-MPI builds
+- `MPIlb_WITH_MPI` enables/disables support of MPI for MPI/non-MPI builds
 
 See an example [here](examples/Fortran/CMakeLists.txt).
 
