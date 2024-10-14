@@ -66,8 +66,8 @@ contains
     disp_unit_num_active = size_num_active
     size_actual_rank = storage_size(lb%rank) / BITS_IN_BYTE
     disp_unit_actual_rank = size_actual_rank
-    size_bounds = 400 ! storage_size(bounds) / BITS_IN_BYTE * 2
-    disp_unit_bounds = 1 ! size_bounds / 2
+    size_bounds = storage_size(bounds_2) / BITS_IN_BYTE * 2
+    disp_unit_bounds = size_bounds / 2
 
     call lb%default_initialize(communicator, lower_bound, upper_bound, min_chunk_size, max_chunk_size)
 
