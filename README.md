@@ -50,7 +50,7 @@ See possible `load-balancer-type`s in the next section.
 
 Type definition can be done in the following manner, for example:
 ```fortran
-use MPI_load_balancers
+use SLB4MPI
 ...
 type(static_load_balancer_t) :: lb
 ```
@@ -81,9 +81,9 @@ After finishing loop, load balancer `lb` must be destroyed before next usage via
 call lb%clean()
 ```
 
-For `runtime` load balancer, default load balancer can be changed with `LBMPI_set_schedule` call in the following way before its initialization:
+For `runtime` load balancer, default load balancer can be changed with `SLB4MPI_set_schedule` call in the following way before its initialization:
 ```fortran
-call LBMPI_set_schedule("guided")
+call SLB4MPI_set_schedule("guided")
 ```
 
 
@@ -136,7 +136,7 @@ If `max_chunk_size` is not specified, the iteration range is divided into chunks
 
 ### `runtime`
 
-The load balancer is determing by `LBMPI_set_schedule` procedure.
+The load balancer is determing by `SLB4MPI_set_schedule` procedure.
 The list of possible values passed as string:
 - `env` (default) selects slice algorithm by `SLB4MPI_LOAD_BALANCER` environment variable;
 - `static` selects `static_load_balancer`;
@@ -152,8 +152,9 @@ The list of possible values passed as string:
 - `local_static`: runtime load balancer will use `local_static_load_balancer`
 - `dynamic`: runtime load balancer will use `dynamic_load_balancer`
 - `guided`: runtime load balancer will use `guided_load_balancer`
-- `work_stealing`: runtime load balancer will use `work_stealling_load_balancer`
+- `work_stealing`: runtime load balancer will use `work_stealing_load_balancer`
 - other values: runtime load balancer will use `static_load_balancer`
+
 
 ## Notes about MPI implementations
 

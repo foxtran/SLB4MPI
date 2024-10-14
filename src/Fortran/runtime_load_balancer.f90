@@ -29,7 +29,7 @@ module SLB4MPI_runtime_load_balancer_m
   end interface
 
   public :: runtime_load_balancer_t
-  public :: LBMPI_set_schedule
+  public :: SLB4MPI_set_schedule
 
 contains
   !>
@@ -54,15 +54,15 @@ contains
       character(len=80) :: envval
       logical :: ok
       call get_environment_variable("SLB4MPI_LOAD_BALANCER", envval)
-      call LBMPI_set_schedule(trim(envval), ok)
+      call SLB4MPI_set_schedule(trim(envval), ok)
       if (len_trim(envval) /= 0 .and. (.not.ok .or. trim(envval) == 'env')) then
         write(error_unit, '(A)') "SLB4MPI_LOAD_BALANCER environmental variable is not set properly!"
         write(error_unit, '(A)') "Actual value is '" // trim(envval) // "'"
         write(error_unit, '(A)') "Possible values are: static, local_static, dynamic, guided, work_stealing"
         write(error_unit, '(A)') "static load balancer will be used!"
-        call LBMPI_set_schedule("static")
+        call SLB4MPI_set_schedule("static")
       else if (len_trim(envval) == 0) then
-        call LBMPI_set_schedule("static")
+        call SLB4MPI_set_schedule("static")
       end if
     end block
     end if
@@ -118,7 +118,7 @@ contains
   !>
   !> @param[in]           lbtype - name of load balancer: static, dynamic, guided
   !> @param[out,optional] ok     - was it set?
-  subroutine LBMPI_set_schedule(lbtype, ok)
+  subroutine SLB4MPI_set_schedule(lbtype, ok)
     character(len=*), intent(in) :: lbtype
     logical, optional, intent(out) :: ok
     logical :: ok_
@@ -140,5 +140,5 @@ contains
         ok_ = .false.
     end select
     if (present(ok)) ok = ok_
-  end subroutine LBMPI_set_schedule
+  end subroutine SLB4MPI_set_schedule
 end module SLB4MPI_runtime_load_balancer_m
