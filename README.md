@@ -37,6 +37,11 @@ For range from 1 to 1000 with min chunk size equals 6 and max chunk size equals 
 ```fortran
 call lb%initialize(comm, 1_8, 1000_8, 6_8, 12_8)
 ```
+The simpler call is also possible, where min and max chunk sizes will be determined automatically:
+```fortran
+call lb%initialize(comm, 1_8, 1000_8)
+```
+This call is a barrier for the whole communicator.
 
 Then, one can ask range for computing with `get_range` call which returns range's start and end by arguments, and the call returns logical value that signals is there something to compute.
 So, the pattern of usage this routine is:
@@ -89,7 +94,7 @@ If `max_chunk_size` is not specified, the iteration range is divided into chunks
 
 ### OpenMPI
 
-`clean` call is synchonization point.
+- `clean` call is synchonization point.
 
 ### IntelMPI
 
