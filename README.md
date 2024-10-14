@@ -94,6 +94,13 @@ If `min_chunk_size` is not specified, it defaults to `1`.
 
 ### `guided`
 
+Each MPI rank executes a chunk, then requests another chunk, until no chunks remain to be assigned.
+For a `min_chunk_size` of `1`, the size of each chunk is proportional to the number of unassigned iterations divided by the number of threads in the team, decreasing to `1` but no more than `max_chunk_size`  iterations.
+For a `min_chunk_size` with value `k` > `1`, the size of each chunk is determined in the same way, with the restriction that the chunks do not contain fewer than `k` iterations but no more than `max_chunk_size` iterations
+  (except for the chunk that contains the sequentially last iteration, which may have fewer than `k` iterations).
+If `min_chunk_size` is not specified, it defaults to `1`.
+If `max_chunk_size` is not specified, the value is determined as average number of elements per MPI rank, but no less than `min_chunk_size`.
+
 ### `work_stealing`
 
 ### `runtime`
