@@ -13,13 +13,13 @@ program main
   call MPI_init(mpierr)
 #endif
   call LBMPI_set_schedule("work_stealing")
-  call lb%initialize(MPI_COMM_WORLD, 1_8, 1000_8, 4_8, 8_8)
+  call lb%initialize(MPI_COMM_WORLD, 1_8, 100_8, 2_8, 4_8)
   do
     if (.not.lb%get_range(bot, top)) exit
     do j = bot, top
     block
       real(8), allocatable :: a(:,:), b(:,:), c(:,:)
-      i = 3 * (1000 - j) + 600
+      i = 3 * (100 - j) + 200
       allocate(a(i,i),b(i,i),c(i,i))
       call random_number(a)
       call random_number(b)
