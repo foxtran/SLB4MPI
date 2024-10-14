@@ -1,10 +1,10 @@
 module SLB4MPI_runtime_load_balancer_m
-  use abstract_load_balancer_m
-  use static_load_balancer_m
-  use local_static_load_balancer_m
-  use dynamic_load_balancer_m
-  use guided_load_balancer_m
-  use work_stealing_load_balancer_m
+  use SLB4MPI_abstract_load_balancer_m
+  use SLB4MPI_static_load_balancer_m
+  use SLB4MPI_local_static_load_balancer_m
+  use SLB4MPI_dynamic_load_balancer_m
+  use SLB4MPI_guided_load_balancer_m
+  use SLB4MPI_work_stealing_load_balancer_m
   implicit none
   private
 

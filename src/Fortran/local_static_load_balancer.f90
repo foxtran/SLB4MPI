@@ -1,5 +1,5 @@
 module SLB4MPI_local_static_load_balancer_m
-  use abstract_load_balancer_m
+  use SLB4MPI_abstract_load_balancer_m
   implicit none
   private
 

@@ -2,7 +2,7 @@ program main
 #ifdef WITH_MPI
   use MPI
 #endif
-  use MPI_load_balancers
+  use SLB4MPI
   implicit none
   type(runtime_load_balancer_t) :: lb
   integer(8) :: bot, top, i, j

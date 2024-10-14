@@ -2,7 +2,7 @@ module SLB4MPI_guided_load_balancer_m
 #ifdef SLB4MPI_WITH_MPI
   use mpi
 #endif
-  use abstract_load_balancer_m
+  use SLB4MPI_abstract_load_balancer_m
   implicit none
   private
 
