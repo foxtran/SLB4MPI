@@ -95,6 +95,14 @@ contains
 
     integer(MPI_INTEGER_KIND) :: ierr
 
+#ifdef WITH_MPI
+    call MPI_Comm_rank(lb%communicator, lb%rank, ierr)
+    call MPI_Comm_size(lb%communicator, lb%nprocs, ierr)
+#else
+    lb%rank = 0
+    lb%nprocs = 1
+#endif
+
     lb%communicator = communicator
     lb%lower_bound = lower_bound
     lb%upper_bound = upper_bound
@@ -111,12 +119,5 @@ contains
     if (lb%lower_bound > lb%upper_bound) error stop "Upper bound is less than lower bound!"
     if (lb%min_chunk_size > lb%max_chunk_size) error stop "Max chunk size is less than min chunk size!"
 
-#ifdef WITH_MPI
-    call MPI_Comm_rank(lb%communicator, lb%rank, ierr)
-    call MPI_Comm_size(lb%communicator, lb%nprocs, ierr)
-#else
-    lb%rank = 0
-    lb%nprocs = 1
-#endif
   end subroutine default_initialize
 end module abstract_load_balancer_m
