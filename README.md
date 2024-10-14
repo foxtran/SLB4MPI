@@ -1,4 +1,4 @@
-# MPI-lb
+# SLB4MPI: Simple load balancers for MPI
 
 A collection of simple load balancers for MPI made in OpenMP manner.
 
@@ -9,28 +9,30 @@ The collection is assumed to be compiled in source tree of parent project with p
 Additional flags, which are required for compiling of collection, are kept inside.
 Currently, only [CMake build system](https://cmake.org) is supported.
 
-To use MPI-lb from your project, add the following lines into your `CMakeLists.txt` for fetching the library:
+To use SLB4MPI from your project, add the following lines into your `CMakeLists.txt` for fetching the library:
 ```cmake
 include(FetchContent)
-FetchContent_Declare(MPIlb
-    GIT_REPOSITORY https://github.com/foxtran/MPI-lb.git
+FetchContent_Declare(SLB4MPI
+    GIT_REPOSITORY https://github.com/foxtran/SLB4MPI.git
     GIT_TAG        origin/master
 )
-FetchContent_MakeAvailable(MPIlb)
-FetchContent_GetProperties(MPIlb SOURCE_DIR MPIlb_SOURCE_DIR)
-set(MPIlb_ENABLE_Fortran ON)
-set(MPIlb_WITH_MPI ON) # or OFF
-add_subdirectory(${MPIlb_SOURCE_DIR} ${MPIlb_SOURCE_DIR}-binary)
+FetchContent_MakeAvailable(SLB4MPI)
+FetchContent_GetProperties(SLB4MPI SOURCE_DIR SLB4MPI_SOURCE_DIR)
+
+set(SLB4MPI_ENABLE_Fortran ON)
+set(SLB4MPI_WITH_MPI ON) # or OFF
+
+add_subdirectory(${SLB4MPI_SOURCE_DIR} ${SLB4MPI_SOURCE_DIR}-binary)
 ```
 
-After this, you can link the library with your application or library:
+After this, you can link the library with your Fortran application or library:
 ```cmake
-target_link_libraries(<TARGET> PUBLIC MPIlb::MPIlb_f)
+target_link_libraries(<TARGET> PUBLIC SLB4MPI::SLB4MPI_Fortran)
 ```
 
 Useful flags that changes behaviour of library:
-- `MPIlb_ENABLE_Fortran` enables/disables MPI load balancers for Fortran language
-- `MPIlb_WITH_MPI` enables/disables support of MPI for MPI/non-MPI builds
+- `SLB4MPI_ENABLE_Fortran` enables/disables MPI load balancers for Fortran language
+- `SLB4MPI_WITH_MPI` enables/disables support of MPI for MPI/non-MPI builds
 
 See an example [here](examples/Fortran/CMakeLists.txt).
 
@@ -136,14 +138,14 @@ If `max_chunk_size` is not specified, the iteration range is divided into chunks
 
 The load balancer is determing by `LBMPI_set_schedule` procedure.
 The list of possible values passed as string:
-- `env` (default) selects slice algorithm by `MPIlb_LOAD_BALANCER` environment variable;
+- `env` (default) selects slice algorithm by `SLB4MPI_LOAD_BALANCER` environment variable;
 - `static` selects `static_load_balancer`;
 - `local_static` selects `local_static_load_balancer`;
 - `dynamic` selects `dynamic_load_balancer`;
 - `guided` selects `guided_load_balancer`;
 - `work_stealing` selects `work_stealing_load_balancer`.
 
-`MPIlb_LOAD_BALANCER` environment variable accepts the following values:
+`SLB4MPI_LOAD_BALANCER` environment variable accepts the following values:
 - not set: runtime load balancer will use `static_load_balancer`
 - empty string: runtime load balancer will use `static_load_balancer`
 - `static`: runtime load balancer will use `static_load_balancer`

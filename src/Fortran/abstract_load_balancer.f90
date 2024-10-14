@@ -1,11 +1,11 @@
-module abstract_load_balancer_m
-#ifdef WITH_MPI
+module SLB4MPI_abstract_load_balancer_m
+#ifdef SLB4MPI_WITH_MPI
   use mpi
 #endif
   implicit none
   private
 
-#ifndef WITH_MPI
+#ifndef SLB4MPI_WITH_MPI
   integer, parameter :: MPI_INTEGER_KIND = 4
   integer, parameter :: MPI_ADDRESS_KIND = 8
 #endif
@@ -95,7 +95,7 @@ contains
 
     integer(MPI_INTEGER_KIND) :: ierr
 
-#ifdef WITH_MPI
+#ifdef SLB4MPI_WITH_MPI
     call MPI_Comm_rank(communicator, lb%rank, ierr)
     call MPI_Comm_size(communicator, lb%nranks, ierr)
 #else
@@ -117,4 +117,4 @@ contains
     if (lb%min_chunk_size > lb%max_chunk_size) error stop "Max chunk size is less than min chunk size!"
 
   end subroutine default_initialize
-end module abstract_load_balancer_m
+end module SLB4MPI_abstract_load_balancer_m

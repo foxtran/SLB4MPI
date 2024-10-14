@@ -1,4 +1,4 @@
-module static_load_balancer_m
+module SLB4MPI_static_load_balancer_m
   use abstract_load_balancer_m
   implicit none
   private
@@ -70,4 +70,4 @@ contains
   subroutine clean(lb)
     class(static_load_balancer_t), intent(inout) :: lb
   end subroutine clean
-end module static_load_balancer_m
+end module SLB4MPI_static_load_balancer_m
