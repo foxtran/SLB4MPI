@@ -19,7 +19,7 @@ FetchContent_MakeAvailable(MPIlb)
 FetchContent_GetProperties(MPIlb SOURCE_DIR MPIlb_SOURCE_DIR)
 set(MPIlb_ENABLE_Fortran ON)
 set(MPIlb_WITH_MPI ${WITH_MPI})
-add_subdirectory(${MPIlb_SOURCE_DIR})
+add_subdirectory(${MPIlb_SOURCE_DIR} ${MPIlb_SOURCE_DIR}-binary)
 
 add_executable(MPIlb_f_example example.f90)
 target_link_libraries(MPIlb_f_example PUBLIC MPIlb::MPIlb_f)
