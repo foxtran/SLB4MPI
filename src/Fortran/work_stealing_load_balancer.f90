@@ -55,8 +55,6 @@ contains
     ! actual rank
     integer(MPI_ADDRESS_KIND) :: size_actual_rank
     integer(MPI_INTEGER_KIND) :: disp_unit_actual_rank
-    type(c_ptr) :: baseaddr_actual_rank
-    integer(MPI_INTEGER_KIND), pointer :: actual_rank
     ! bounds
     integer(MPI_ADDRESS_KIND) :: size_bounds
     integer(MPI_INTEGER_KIND) :: disp_unit_bounds
@@ -102,8 +100,6 @@ contains
       call c_f_pointer(baseaddr_num_active, num_active)
       num_active = lb%nprocs
     end if
-    call c_f_pointer(baseaddr_actual_rank, actual_rank)
-    actual_rank = lb%rank
     call c_f_pointer(baseaddr_bounds, bounds, [2])
     bounds = [ lb%lower_bound, lb%upper_bound ]
 
