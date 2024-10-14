@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.22)
 project(MPI_load_balancer
   VERSION 0.0.0)
 
-option(MPIlb_ENABLE_Fortran "Enable Fortran-implemented load balancer" ON)
+option(MPIlb_ENABLE_Fortran "Enable Fortran-implemented load balancer" OFF)
 option(MPIlb_WITH_MPI       "Enable MPI"                               OFF)
 
 if(MPIlb_ENABLE_Fortran)
