@@ -67,7 +67,7 @@ contains
     integer(MPI_INTEGER_KIND) :: disp_unit_done
     logical, parameter :: done = .false.
 
-    size_num_active = storage_size(lb%nprocs) / BITS_IN_BYTE
+    size_num_active = storage_size(lb%nranks) / BITS_IN_BYTE
     disp_unit_num_active = size_num_active
     size_actual_rank = storage_size(lb%rank) / BITS_IN_BYTE
     disp_unit_actual_rank = size_actual_rank
@@ -78,8 +78,8 @@ contains
 
     call lb%default_initialize(communicator, lower_bound, upper_bound, min_chunk_size, max_chunk_size)
 
-    n_tasks = (upper_bound - lower_bound + 1) / lb%nprocs
-    extra_tasks = mod(upper_bound - lower_bound + 1, lb%nprocs)
+    n_tasks = (upper_bound - lower_bound + 1) / lb%nranks
+    extra_tasks = mod(upper_bound - lower_bound + 1, lb%nranks)
     if (n_tasks < min_chunk_size) then
         n_tasks = min_chunk_size
         extra_tasks = 0
@@ -106,7 +106,7 @@ contains
 
     if (lb%rank == lb%root) then
       call c_f_pointer(baseaddr_num_active, num_active)
-      num_active = lb%nprocs
+      num_active = lb%nranks
     end if
     call c_f_pointer(baseaddr_bounds, bounds, [2])
     bounds = [ lb%lower_bound, lb%upper_bound ]
@@ -176,7 +176,7 @@ contains
             call MPI_Win_lock(MPI_LOCK_EXCLUSIVE, lb%root, 0_MPI_INTEGER_KIND, lb%window_num_active, ierr)
             call MPI_Fetch_and_op(-1_MPI_INTEGER_KIND, num_active, MPI_INTEGER4, lb%root, 0_MPI_ADDRESS_KIND, MPI_SUM, lb%window_num_active, ierr)
             call MPI_Win_unlock(lb%root, lb%window_num_active, ierr)
-            lb%actual_rank = mod(lb%actual_rank + 1, lb%nprocs)
+            lb%actual_rank = mod(lb%actual_rank + 1, lb%nranks)
             lb%done = .true.
         end if
         if (lower_bound > upper_bound) to_compute = .false.
@@ -254,9 +254,9 @@ contains
                 block
                     real(4) :: randval
                     call random_number(randval)
-                    ! log(Nprocs) <- how often to check cond (each 1, 2, 3, ..)
-                    ! 1 / log(Nprocs) <- probability
-                    if (randval > 1._4 / log(real(lb%nprocs, kind=4)) .and. hop_count < 20) cycle
+                    ! log(nranks) <- how often to check cond (each 1, 2, 3, ..)
+                    ! 1 / log(nranks) <- probability
+                    if (randval > 1._4 / log(real(lb%nranks, kind=4)) .and. hop_count < 20) cycle
                 end block
             end if
 #ifdef DEBUG_RANGES
@@ -274,10 +274,10 @@ contains
             call MPI_Get(num_active, 1_MPI_INTEGER_KIND, MPI_INTEGER4, lb%root, 0_MPI_ADDRESS_KIND, 1_MPI_INTEGER_KIND, MPI_INTEGER4, lb%window_num_active, ierr)
             call MPI_Win_unlock(lb%root, lb%window_num_active, ierr)
             if (num_active == 0) return
-            lb%actual_rank = mod(lb%actual_rank + 1, lb%nprocs)
+            lb%actual_rank = mod(lb%actual_rank + 1, lb%nranks)
             hop_count = 0
             nohop_count = nohop_count + 1
-            if (nohop_count > lb%nprocs) return
+            if (nohop_count > lb%nranks) return
         end block
     end do
 #endif
