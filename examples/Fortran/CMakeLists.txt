@@ -12,8 +12,8 @@ endif()
 
 include(FetchContent)
 FetchContent_Declare(SLB4MPI
-    GIT_REPOSITORY https://github.com/foxtran/MPI-lb.git
-    GIT_TAG        origin/rename/project
+    GIT_REPOSITORY https://github.com/foxtran/SLB4MPI.git
+    GIT_TAG        origin/rename/final
 )
 FetchContent_MakeAvailable(SLB4MPI)
 FetchContent_GetProperties(SLB4MPI SOURCE_DIR SLB4MPI_SOURCE_DIR)
