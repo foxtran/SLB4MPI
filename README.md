@@ -14,7 +14,7 @@ To use SLB4MPI from your project, add the following lines into your `CMakeLists.
 include(FetchContent)
 FetchContent_Declare(SLB4MPI
     GIT_REPOSITORY https://github.com/foxtran/SLB4MPI.git
-    GIT_TAG        origin/master
+    GIT_TAG        0.0.1
 )
 FetchContent_MakeAvailable(SLB4MPI)
 FetchContent_GetProperties(SLB4MPI SOURCE_DIR SLB4MPI_SOURCE_DIR)
