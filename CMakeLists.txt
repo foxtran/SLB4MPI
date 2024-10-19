@@ -4,8 +4,13 @@ project(SLB4MPI
   VERSION 0.0.1
   DESCRIPTION "Simple load balancers for MPI")
 
+option(SLB4MPI_ENABLE_CXX     "Enable C++-implemented load balancer"     OFF)
 option(SLB4MPI_ENABLE_Fortran "Enable Fortran-implemented load balancer" OFF)
 option(SLB4MPI_WITH_MPI       "Enable MPI"                               OFF)
+
+if(SLB4MPI_ENABLE_CXX)
+  enable_language(CXX)
+endif()
 
 if(SLB4MPI_ENABLE_Fortran)
   enable_language(Fortran)
@@ -18,6 +23,22 @@ if(SLB4MPI_WITH_MPI)
       message(FATAL_ERROR "F90 MPI module not found!")
     endif()
   endif()
+endif()
+
+if(SLB4MPI_ENABLE_CXX AND NOT TARGET SLB4MPI::SLB4MPI_CXX)
+  set(SOURCES_CXX)
+  add_subdirectory(src/CXX)
+  add_library(SLB4MPI__SLB4MPI_cxx OBJECT ${SOURCES_CXX})
+  target_include_directories(SLB4MPI__SLB4MPI_cxx PUBLIC src/CXX/SLB4MPI)
+  target_compile_features(SLB4MPI__SLB4MPI_cxx PRIVATE cxx_std_11)
+  set_target_properties(SLB4MPI__SLB4MPI_cxx PROPERTIES CXX_STANDARD_REQUIRED ON
+                                                        CXX_EXTENSIONS OFF
+  )
+  if(SLB4MPI_WITH_MPI)
+    target_compile_definitions(SLB4MPI__SLB4MPI_cxx PRIVATE SLB4MPI_WITH_MPI)
+    target_link_libraries(SLB4MPI__SLB4MPI_cxx PUBLIC MPI::MPI_CXX)
+  endif()
+  add_library(SLB4MPI::SLB4MPI_CXX ALIAS SLB4MPI__SLB4MPI_cxx)
 endif()
 
 if(SLB4MPI_ENABLE_Fortran AND NOT TARGET SLB4MPI::SLB4MPI_Fortran)
