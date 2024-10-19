@@ -164,9 +164,9 @@ The list of possible values passed as string:
 
 ### IntelMPI
 
-- Load balancers `dynamic`, `guided`, `work_stealing` as well as `runtime` may have significant performance issues.
-- `MPI_Accumulate` is used instead of `MPI_Put`.
-- `I_MPI_ASYNC_PROGRESS=1` leads to runtime fails.
+- Load balancers `dynamic`, `guided`, `work_stealing` as well as `runtime` may have significant performance issues. [Report on Intel Forum](https://community.intel.com/t5/Intel-MPI-Library/MPI-Win-lock-extremely-long-time-for-waiting/m-p/1637153/highlight/true#M11939)
+- `MPI_Accumulate` is used instead of `MPI_Put`. [Report on Intel Forum](https://community.intel.com/t5/Intel-MPI-Library/MPI-Put-RDMA-WRITE-error-which-MPI-Accumulate-works-fine/m-p/1637148/highlight/true#M11938)
+- `I_MPI_ASYNC_PROGRESS=1` leads to runtime fails. [Report on Intel Forum](https://community.intel.com/t5/Intel-MPI-Library/MPI-Win-lock-extremely-long-time-for-waiting/m-p/1637153/highlight/true#M11939)
 - **NOTE:** no ILP64 support.
 
 ### MPICH
