@@ -13,7 +13,7 @@
 
 namespace SLB4MPI {
   class AbstractLoadBalancer {
-    private:
+    protected:
       int communicator;       ///< MPI communicator
       int rank;               ///< Rank of the process
       int root;               ///< Rank of the root process
