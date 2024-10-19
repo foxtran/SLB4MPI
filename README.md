@@ -44,7 +44,7 @@ See an example [here](examples/Fortran/CMakeLists.txt).
 
 ### Fortran
 
-All load balancers are available with `MPI_load_balancers` which provides `<load-balancer-type>_load_balancer_t` types.
+All load balancers are available in `SLB4MPI` module which provides `<load-balancer-type>_load_balancer_t` types.
 Each `<load-balancer-type>_load_balancer_t` implements abstract interface defined in [abstract_load_balancer.f90](src/Fortran/abstract_load_balancer.f90).
 See possible `load-balancer-type`s in the next section.
 
