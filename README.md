@@ -135,19 +135,26 @@ FetchContent_Declare(SLB4MPI
 FetchContent_MakeAvailable(SLB4MPI)
 FetchContent_GetProperties(SLB4MPI SOURCE_DIR SLB4MPI_SOURCE_DIR)
 
-set(SLB4MPI_ENABLE_Fortran ON)
+set(SLB4MPI_ENABLE_CXX ON) # or OFF
+set(SLB4MPI_ENABLE_Fortran ON) # or OFF
 set(SLB4MPI_WITH_MPI ON) # or OFF
 
 add_subdirectory(${SLB4MPI_SOURCE_DIR} ${SLB4MPI_SOURCE_DIR}-binary)
 ```
 
-After this, you can link the library with your Fortran application or library:
+After this, you can link the library with your Fortran application or library (`SLB4MPI_ENABLE_Fortran` must be `ON`):
 ```cmake
 target_link_libraries(<TARGET> PUBLIC SLB4MPI::SLB4MPI_Fortran)
 ```
+or with C++ application or library (`SLB4MPI_ENABLE_CXX` must be `ON`):
+```cmake
+target_link_libraries(<TARGET> PUBLIC SLB4MPI::SLB4MPI_CXX)
+```
+
 
 Useful flags that changes behaviour of library:
-- `SLB4MPI_ENABLE_Fortran` enables/disables MPI load balancers for Fortran language
+- `SLB4MPI_ENABLE_CXX` enables/disables MPI load balancers for C++ language (requires C++14)
+- `SLB4MPI_ENABLE_Fortran` enables/disables MPI load balancers for Fortran language (requires Fortran 2003)
 - `SLB4MPI_WITH_MPI` enables/disables support of MPI for MPI/non-MPI builds
 
 See an example [here](examples/Fortran/CMakeLists.txt).
