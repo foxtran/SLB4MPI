@@ -30,20 +30,24 @@ SLB4MPI::WorkStealingLoadBalancer::WorkStealingLoadBalancer(const MPI_Comm commu
   this->actual_rank = this->rank;
   this->done = false;
 
-  void * baseaddr_num_active, * baseaddr_bounds;
+  void * baseaddr;
 
-  MPI_Win_allocate(sizeof(int), sizeof(int), MPI_INFO_NULL, this->communicator, baseaddr_num_active, &(this->window_num_active));
+  MPI_Win_allocate(sizeof(int), sizeof(int), MPI_INFO_NULL, this->communicator, baseaddr, &(this->window_num_active));
   MPI_Win_create(&(this->actual_rank), sizeof(int), sizeof(int), MPI_INFO_NULL, this->communicator, &(this->window_actual_rank));
-  MPI_Win_allocate(2*sizeof(int64_t), sizeof(int64_t), MPI_INFO_NULL, this->communicator, baseaddr_bounds, &(this->window_bounds));
+  MPI_Win_allocate(2*sizeof(int64_t), sizeof(int64_t), MPI_INFO_NULL, this->communicator, baseaddr, &(this->window_bounds));
   MPI_Win_create(&(this->done), sizeof(bool), sizeof(bool), MPI_INFO_NULL, this->communicator, &(this->window_done));
 
   if (this->rank == this->root) {
-    int* num_active = static_cast<int*>(baseaddr_num_active);
-    *num_active = this->nranks;
+    MPI_Win_lock(MPI_LOCK_EXCLUSIVE, this->root, 0, this->window_num_active);
+    MPI_Put(&(this->nranks), 1, MPI_INT, this->root, 0, 1, MPI_INT, this->window_num_active);
+    MPI_Win_unlock(this->root, this->window_num_active);
   }
-  std::array<int64_t,2> * bounds = static_cast<std::array<int64_t,2>*>(baseaddr_bounds);
-  (*bounds)[0] = this->lower_bound;
-  (*bounds)[1] = this->upper_bound;
+  std::array<int64_t,2> bounds;
+  bounds[0] = this->lower_bound;
+  bounds[1] = this->upper_bound;
+  MPI_Win_lock(MPI_LOCK_EXCLUSIVE, this->rank, 0, this->window_bounds);
+  MPI_Put(&bounds, 2, MPI_INT64_T, this->rank, 0, 2, MPI_INT64_T, this->window_bounds);
+  MPI_Win_unlock(this->rank, this->window_bounds);
 
   MPI_Barrier(this->communicator);
 #endif
