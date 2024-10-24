@@ -68,7 +68,6 @@ bool SLB4MPI::WorkStealingLoadBalancer::get_range(int64_t& lower_bound, int64_t&
 
   bool to_compute = false;
   if (lower_bound <= this->upper_bound) to_compute = true;
-  return to_compute;
 
 #else
   std::array<int64_t, 2> bounds;
@@ -157,6 +156,6 @@ bool SLB4MPI::WorkStealingLoadBalancer::get_range(int64_t& lower_bound, int64_t&
     nohop_count = nohop_count + 1;
     if (nohop_count > this->nranks) return false;
   }
-  return false;
 #endif
+  return to_compute;
 }
