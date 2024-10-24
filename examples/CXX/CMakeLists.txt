@@ -31,3 +31,4 @@ endif()
 
 add_executable(SLB4MPI_cxx_example example.cpp)
 target_link_libraries(SLB4MPI_cxx_example PUBLIC SLB4MPI::SLB4MPI_CXX)
+target_compile_features(SLB4MPI_cxx_example PRIVATE cxx_std_14)
