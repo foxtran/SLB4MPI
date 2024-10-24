@@ -11,7 +11,7 @@ jobs:
 
     strategy:
       matrix:
-        image: [ 'ubuntu-22.04' ]
+        image: [ 'ubuntu-24.04' ]
         GCC: [ '12' ]
         BUILD_TYPE: [ 'Release' ]
         WITH_MPI: [ 'ON', 'OFF' ]
@@ -45,11 +45,11 @@ jobs:
     - name: Tests with MPI
       if: matrix.WITH_MPI == 'ON'
       run: |
+        mpirun --version
         mpirun -n 2 --oversubscribe build/SLB4MPI_cxx_example
         SLB4MPI_LOAD_BALANCER=static        mpirun -n 2 --oversubscribe build/SLB4MPI_cxx_example
         SLB4MPI_LOAD_BALANCER=local_static  mpirun -n 2 --oversubscribe build/SLB4MPI_cxx_example
         SLB4MPI_LOAD_BALANCER=dynamic       mpirun -n 2 --oversubscribe build/SLB4MPI_cxx_example
         SLB4MPI_LOAD_BALANCER=guided        mpirun -n 2 --oversubscribe build/SLB4MPI_cxx_example
-        #SLB4MPI_LOAD_BALANCER=work_stealing mpirun -n 2 --oversubscribe build/SLB4MPI_cxx_example
+        SLB4MPI_LOAD_BALANCER=work_stealing mpirun -n 2 --oversubscribe build/SLB4MPI_cxx_example
         SLB4MPI_LOAD_BALANCER=dinamic       mpirun -n 2 --oversubscribe build/SLB4MPI_cxx_example
-        mpirun --version
