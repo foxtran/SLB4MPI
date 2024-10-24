@@ -3,8 +3,10 @@
 #include <iostream>
 
 int main() {
+  int mpi_rank = 0;
 #ifdef WITH_MPI
   MPI_Init(nullptr, nullptr);
+  MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
 #else
   const int MPI_COMM_WORLD = 0;
 #endif
@@ -12,7 +14,7 @@ int main() {
     int64_t bot, top;
     SLB4MPI::RuntimeLoadBalancer lb("env", MPI_COMM_WORLD, 1, 100, 2, 4);
     while (lb.get_range(bot, top)) {
-      std::cout << "Range [ " << bot << ", " << top << " ]" << std::endl;
+      std::cout << "Range [ " << bot << ", " << top << " ] @ " << mpi_rank << std::endl;
       for (int64_t i = bot; i <= top; i++) {
         // do stuff
       }
