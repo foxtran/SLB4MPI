@@ -97,6 +97,17 @@ call SLB4MPI_set_schedule("guided")
 - `work_stealing`
 - `runtime`
 
+Typenames of different balancers in diffent languages:
+
+| load balancer   | Typename in Fortran             | Typename in C++            |
+|-----------------|:--------------------------------|:---------------------------|
+| `static`        | `static_load_balancer_t`        | `StaticLoadBalancer`       |
+| `local_static`  | `local_static_load_balancer_t`  | `LocalStaticLoadBalancer`  |
+| `dynamic`       | `dynamic_load_balancer_t`       | `DynamicLoadBalancer`      |
+| `guided`        | `guided_load_balancer_t`        | `GuidedLoadBalancer`       |
+| `work_stealing` | `work_stealing_load_balancer_t` | `WorkStealingLoadBalancer` |
+| `runtime`       | `runtime_load_balancer_t`       | `RuntimeLoadBalancer`      |
+
 ### `static`
 
 Iterations are divided into chunks of size `max_chunk_size`, and the chunks are assigned to the MPI ranks in the communicator in a round-robin fashion in the order of the MPI rank.
