@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <array>
 #include <cmath>
+#include <random>
 
 SLB4MPI::WorkStealingLoadBalancer::WorkStealingLoadBalancer(const MPI_Comm communicator, const int64_t lower_bound, const int64_t upper_bound, const int64_t min_chunk_size, const int64_t max_chunk_size) :
   SLB4MPI::AbstractLoadBalancer::AbstractLoadBalancer(communicator, lower_bound, upper_bound, min_chunk_size, max_chunk_size) {
@@ -143,7 +144,10 @@ bool SLB4MPI::WorkStealingLoadBalancer::get_range(int64_t& lower_bound, int64_t&
       // but... to avoid infinity cycle, sometimes we will check that there is some jobs
       hop_count = hop_count + 1;
       {
-        float randval = 0.5;
+        std::random_device rd;
+        std::mt19937 gen(rd());
+        std::uniform_real_distribution<> unif(0.0, 1.0);
+        float randval = unif(gen);
         // log(nranks) <- how often to check cond (each 1, 2, 3, ..)
         // 1 / log(nranks) <- probability
         if (randval > (1. / std::log(static_cast<float>(this->nranks))) && hop_count < 20) continue;
