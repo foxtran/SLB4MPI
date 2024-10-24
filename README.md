@@ -3,43 +3,6 @@
 A collection of simple load balancers for MPI made in OpenMP manner.
 
 
-## Compilation process
-
-The collection is assumed to be compiled in source tree of parent project with passing all flags from it.
-Additional flags, which are required for compiling of collection, are kept inside.
-Currently, only [CMake build system](https://cmake.org) is supported.
-
-To use SLB4MPI from your project, add the following lines into your `CMakeLists.txt` for fetching the library:
-```cmake
-include(FetchContent)
-FetchContent_Declare(SLB4MPI
-    GIT_REPOSITORY https://github.com/foxtran/SLB4MPI.git
-    GIT_TAG        0.0.1
-)
-FetchContent_MakeAvailable(SLB4MPI)
-FetchContent_GetProperties(SLB4MPI SOURCE_DIR SLB4MPI_SOURCE_DIR)
-
-set(SLB4MPI_ENABLE_Fortran ON)
-set(SLB4MPI_WITH_MPI ON) # or OFF
-
-add_subdirectory(${SLB4MPI_SOURCE_DIR} ${SLB4MPI_SOURCE_DIR}-binary)
-```
-
-After this, you can link the library with your Fortran application or library:
-```cmake
-target_link_libraries(<TARGET> PUBLIC SLB4MPI::SLB4MPI_Fortran)
-```
-
-Useful flags that changes behaviour of library:
-- `SLB4MPI_ENABLE_Fortran` enables/disables MPI load balancers for Fortran language
-- `SLB4MPI_WITH_MPI` enables/disables support of MPI for MPI/non-MPI builds
-
-See an example [here](examples/Fortran/CMakeLists.txt).
-
-
-**NOTE:** The library does not provide ILP64 support.
-
-
 ## API
 
 ### Fortran
@@ -154,6 +117,43 @@ The list of possible values passed as string:
 - `guided`: runtime load balancer will use `guided_load_balancer`
 - `work_stealing`: runtime load balancer will use `work_stealing_load_balancer`
 - other values: runtime load balancer will use `static_load_balancer`
+
+
+## Compilation process
+
+The collection is assumed to be compiled in source tree of parent project with passing all flags from it.
+Additional flags, which are required for compiling of collection, are kept inside.
+Currently, only [CMake build system](https://cmake.org) is supported.
+
+To use SLB4MPI from your project, add the following lines into your `CMakeLists.txt` for fetching the library:
+```cmake
+include(FetchContent)
+FetchContent_Declare(SLB4MPI
+    GIT_REPOSITORY https://github.com/foxtran/SLB4MPI.git
+    GIT_TAG        0.0.1
+)
+FetchContent_MakeAvailable(SLB4MPI)
+FetchContent_GetProperties(SLB4MPI SOURCE_DIR SLB4MPI_SOURCE_DIR)
+
+set(SLB4MPI_ENABLE_Fortran ON)
+set(SLB4MPI_WITH_MPI ON) # or OFF
+
+add_subdirectory(${SLB4MPI_SOURCE_DIR} ${SLB4MPI_SOURCE_DIR}-binary)
+```
+
+After this, you can link the library with your Fortran application or library:
+```cmake
+target_link_libraries(<TARGET> PUBLIC SLB4MPI::SLB4MPI_Fortran)
+```
+
+Useful flags that changes behaviour of library:
+- `SLB4MPI_ENABLE_Fortran` enables/disables MPI load balancers for Fortran language
+- `SLB4MPI_WITH_MPI` enables/disables support of MPI for MPI/non-MPI builds
+
+See an example [here](examples/Fortran/CMakeLists.txt).
+
+
+**NOTE:** The library does not provide ILP64 support.
 
 
 ## Notes about MPI implementations
