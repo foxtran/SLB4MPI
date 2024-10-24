@@ -1,8 +1,10 @@
 #include <SLB4MPI.hpp>
 
 #include <iostream>
+#include <thread>
 
 int main() {
+  using namespace std::chrono_literals;
   int mpi_rank = 0;
 #ifdef WITH_MPI
   MPI_Init(nullptr, nullptr);
@@ -17,6 +19,7 @@ int main() {
       std::cout << "Range [ " << bot << ", " << top << " ] @ " << mpi_rank << std::endl;
       for (int64_t i = bot; i <= top; i++) {
         // do stuff
+        std::this_thread::sleep_for(i * 2ms);
       }
     }
     std::cout << "Done!" << std::endl;
