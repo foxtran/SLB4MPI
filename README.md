@@ -195,7 +195,7 @@ Useful flags that changes behaviour of library:
 - `SLB4MPI_ENABLE_Fortran` enables/disables MPI load balancers for Fortran language (requires Fortran 2003)
 - `SLB4MPI_WITH_MPI` enables/disables support of MPI for MPI/non-MPI builds
 
-See an example [here](examples/Fortran/CMakeLists.txt).
+See example for [Fortran](examples/Fortran/CMakeLists.txt) and [C++](examples/CXX/CMakeLists.txt).
 
 
 **NOTE:** The library does not provide ILP64 support.
