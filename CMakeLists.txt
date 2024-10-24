@@ -36,7 +36,7 @@ if(SLB4MPI_ENABLE_CXX AND NOT TARGET SLB4MPI::SLB4MPI_CXX)
                                                         INTERFACE_INCLUDE_DIRECTORIES ${CMAKE_CURRENT_SOURCE_DIR}/src/CXX/SLB4MPI
   )
   if(SLB4MPI_WITH_MPI)
-    target_compile_definitions(SLB4MPI__SLB4MPI_cxx PRIVATE SLB4MPI_WITH_MPI)
+    target_compile_definitions(SLB4MPI__SLB4MPI_cxx PUBLIC SLB4MPI_WITH_MPI)
     target_link_libraries(SLB4MPI__SLB4MPI_cxx PUBLIC MPI::MPI_CXX)
   endif()
   add_library(SLB4MPI::SLB4MPI_CXX ALIAS SLB4MPI__SLB4MPI_cxx)

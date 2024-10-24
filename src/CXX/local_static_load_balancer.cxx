@@ -2,7 +2,7 @@
 
 #include <algorithm>
 
-SLB4MPI::LocalStaticLoadBalancer::LocalStaticLoadBalancer(const int communicator, const int64_t lower_bound, const int64_t upper_bound, const int64_t min_chunk_size, const int64_t max_chunk_size) :
+SLB4MPI::LocalStaticLoadBalancer::LocalStaticLoadBalancer(const MPI_Comm communicator, const int64_t lower_bound, const int64_t upper_bound, const int64_t min_chunk_size, const int64_t max_chunk_size) :
   SLB4MPI::AbstractLoadBalancer::AbstractLoadBalancer(communicator, lower_bound, upper_bound, min_chunk_size, max_chunk_size) {
   int64_t n_tasks = (upper_bound - lower_bound + 1) / this->nranks;
   int64_t extra_tasks = (upper_bound - lower_bound + 1) % this->nranks;

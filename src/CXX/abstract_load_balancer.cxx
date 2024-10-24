@@ -15,7 +15,7 @@
  * @param[in, optional] max_chunk_size - maximal size of chank that can be associated with job, default: upper_bound - lower_bound + 1
  *
  */
-SLB4MPI::AbstractLoadBalancer::AbstractLoadBalancer(const int communicator, const int64_t lower_bound, const int64_t upper_bound, const int64_t min_chunk_size, const int64_t max_chunk_size) {
+SLB4MPI::AbstractLoadBalancer::AbstractLoadBalancer(const MPI_Comm communicator, const int64_t lower_bound, const int64_t upper_bound, const int64_t min_chunk_size, const int64_t max_chunk_size) {
   this->communicator = communicator;
   this->rank = 0;
   this->nranks = 1;

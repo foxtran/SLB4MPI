@@ -4,7 +4,7 @@
 
 int main() {
 #ifdef WITH_MPI
-  MPI_Init();
+  MPI_Init(nullptr, nullptr);
 #else
   const int MPI_COMM_WORLD = 0;
 #endif
