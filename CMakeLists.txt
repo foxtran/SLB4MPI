@@ -33,6 +33,7 @@ if(SLB4MPI_ENABLE_CXX AND NOT TARGET SLB4MPI::SLB4MPI_CXX)
   target_compile_features(SLB4MPI__SLB4MPI_cxx PRIVATE cxx_std_14)
   set_target_properties(SLB4MPI__SLB4MPI_cxx PROPERTIES CXX_STANDARD_REQUIRED ON
                                                         CXX_EXTENSIONS OFF
+                                                        INTERFACE_INCLUDE_DIRECTORIES ${CMAKE_CURRENT_SOURCE_DIR}/src/CXX/SLB4MPI
   )
   if(SLB4MPI_WITH_MPI)
     target_compile_definitions(SLB4MPI__SLB4MPI_cxx PRIVATE SLB4MPI_WITH_MPI)
