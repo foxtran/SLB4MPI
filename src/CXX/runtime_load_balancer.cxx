@@ -9,10 +9,8 @@ SLB4MPI::RuntimeLoadBalancer::RuntimeLoadBalancer(const std::string& lbtype, con
   SLB4MPI::AbstractLoadBalancer::AbstractLoadBalancer(communicator, lower_bound, upper_bound, min_chunk_size, max_chunk_size) {
   enum class LBType { env, rb_static, local_static, dynamic, guided, work_stealing, unknown };
   LBType lbtypeid = LBType::env;
-  bool isenv = false;
   std::string envval = std::string();
   if (lbtype == std::string("env")) {
-    isenv = true;
     char const* Cenvval = std::getenv("SLB4MPI_LOAD_BALANCER");
     envval = Cenvval == nullptr ? std::string() : std::string(Cenvval);
     if (envval == std::string() || envval == std::string("static")) {
@@ -26,7 +24,11 @@ SLB4MPI::RuntimeLoadBalancer::RuntimeLoadBalancer(const std::string& lbtype, con
     } else if (envval == std::string("work_stealing")) {
       lbtypeid = LBType::work_stealing;
     } else {
-      lbtypeid = LBType::unknown;
+      std::cerr << "Unknown runtime load balancer taken from environmnent: '" << envval << "'!" << std::endl;
+      std::cerr << "Please, check SLB4MPI_LOAD_BALANCER environmental variable!" << std::endl;
+      std::cerr << "Possible values are: static, local_static, dynamic, guided, workstealing." << std::endl;
+      std::cerr << "Static load balancer will be used." << std::endl;
+      lbtypeid = LBType::rb_static;
     }
   } else if (lbtype == std::string("static")) {
     lbtypeid = LBType::rb_static;
@@ -64,13 +66,8 @@ SLB4MPI::RuntimeLoadBalancer::RuntimeLoadBalancer(const std::string& lbtype, con
       std::exit(1);
       break;
     case LBType::unknown:
-      if (isenv) {
-        std::cerr << "Unknown runtime load balancer taken from environmnent: '" << envval << "'!" << std::endl;
-        std::cerr << "Please, check SLB4MPI_LOAD_BALANCER environmental variable!" << std::endl;
-        std::cerr << "Possible values are: static, local_static, dynamic, guided, workstealing." << std::endl;
-      } else {
-        std::cerr << "Unknown runtime load balancer: '" << lbtype << "'!" << std::endl;
-      }
+      // can be a bug in a program
+      std::cerr << "Unknown runtime load balancer: '" << lbtype << "'!" << std::endl;
       std::exit(1);
       break;
   }
