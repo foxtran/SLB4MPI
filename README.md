@@ -5,6 +5,44 @@ A collection of simple load balancers for MPI made in OpenMP manner.
 
 ## API
 
+### С++
+
+All load balancers are available via `SLB4MPI.hpp` header which provides `<Load-Balancer-Type>LoadBalancer` types.
+Each `<Load-Balancer-Type>LoadBalancer` implements abstract interface defined in [abstract_load_balancer.hpp](src/CXX/SLB4MPI/SLB4MPI/abstract_load_balancer.hpp).
+See possible `Load-Balancer-Type`s in the next section.
+
+Initialization can be done in the following manner, for example (`StaticLoadBalancer` will be used):
+```cpp
+#include <SLB4MPI.h>
+...
+StaticLoadBalancer slb(MPI_COMM_WORLD, 1, 100, 2, 4);
+```
+That will initialize load balancer `slb`  with range from lower bound (`1`) to upper bound (`100`) and with min (`2`) and max (`4`) chunk sizes which are optional which will work on communicator `comm`.
+Simpler initialization is also possible with default min and max chuck sizes:
+```cpp
+StaticLoadBalancer slb(MPI_COMM_WORLD, 1, 100);
+```
+This is a barrier for the whole communicator.
+
+Then, one can ask range for computing with `get_range` method which returns range's start and end by arguments, and the method returns logical value that signals is there something to compute.
+So, the pattern of usage this routine is:
+```cpp
+if (slb.get_range(range_start, range_end)) { // returns [ range_start, range_end ]
+...
+}
+```
+Single call may return only a part of whole range, so, proper call should be inside of `while`-loop.
+
+After finishing loop, load balancer `lb` must be destroyed.
+Internally, it uses RAII, so it most of cases you do not think about desctructing it.
+
+For `Runtime` load balancer, a proper load balancer must be specified via first argument during initialization:
+```cpp
+std::string rlbtype = std::string("dynamic");
+RuntimeLoadBalancer slb(rlbtype, MPI_COMM_WORLD, 1, 100, 2, 4);
+```
+See possible values in the next section.
+
 ### Fortran
 
 All load balancers are available in `SLB4MPI` module which provides `<load-balancer-type>_load_balancer_t` types.
