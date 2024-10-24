@@ -2,6 +2,7 @@
 
 #include <cstdlib>
 #include <algorithm>
+#include <iostream>
 
 /**
  *
@@ -34,8 +35,18 @@ SLB4MPI::AbstractLoadBalancer::AbstractLoadBalancer(const int communicator, cons
     this->max_chunk_size = std::max((this->upper_bound - this->lower_bound + 1) / this->nranks, this->min_chunk_size);
   }
 
-  if (this->min_chunk_size <= 0) std::exit(1); // "Min chunk size must be greater than zero!"
+  if (this->min_chunk_size <= 0) {
+    std::cerr << "Min chunk size must be greater than zero!" << std::endl;
+    std::exit(1);
+  }
 
-  if (this->lower_bound > this->upper_bound) std::exit(1); // "Upper bound is less than lower bound!"
-  if (this->min_chunk_size > this->max_chunk_size) std::exit(1); // "Max chunk size is less than min chunk size!"
+  if (this->lower_bound > this->upper_bound) {
+    std::cerr << "Upper bound is less than lower bound!" << this->lower_bound << " " << this->upper_bound << std::endl;
+    std::exit(1);
+  }
+
+  if (this->min_chunk_size > this->max_chunk_size) {
+    std::cerr << "Max chunk size is less than min chunk size!" << std::endl;
+    std::exit(1);
+  }
 }
