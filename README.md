@@ -33,13 +33,13 @@ if (slb.get_range(range_start, range_end)) { // returns [ range_start, range_end
 ```
 Single call may return only a part of whole range, so, proper call should be inside of `while`-loop.
 
-After finishing loop, load balancer `lb` must be destroyed.
-Internally, it uses RAII, so it most of cases you do not think about desctructing it.
+After finishing loop, load balancer `slb` must be destroyed.
+Internally, it uses RAII, so it most of cases you do not think about destructing it.
 
 For `Runtime` load balancer, a proper load balancer must be specified via first argument during initialization:
 ```cpp
 std::string rlbtype = std::string("dynamic");
-RuntimeLoadBalancer slb(rlbtype, MPI_COMM_WORLD, 1, 100, 2, 4);
+RuntimeLoadBalancer rlb(rlbtype, MPI_COMM_WORLD, 1, 100, 2, 4);
 ```
 See possible values in the next section.
 
