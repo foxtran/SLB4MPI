@@ -27,7 +27,7 @@ namespace SLB4MPI {
        * @param[in, optional] max_chunk_size - maximal size of chank that can be associated with job, default: upper_bound - lower_bound + 1
        *
        */
-      GuidedLoadBalancer(const int communicator, const int64_t lower_bound, const int64_t upper_bound, const int64_t min_chunk_size = 1, const int64_t max_chunk_size = -1);
+      GuidedLoadBalancer(const MPI_Comm communicator, const int64_t lower_bound, const int64_t upper_bound, const int64_t min_chunk_size = 1, const int64_t max_chunk_size = -1);
       /**
        *
        * @brief d-tor of GuidedLoadBalancer

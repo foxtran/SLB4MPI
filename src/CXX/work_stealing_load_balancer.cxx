@@ -4,7 +4,7 @@
 #include <array>
 #include <cmath>
 
-SLB4MPI::WorkStealingLoadBalancer::WorkStealingLoadBalancer(const int communicator, const int64_t lower_bound, const int64_t upper_bound, const int64_t min_chunk_size, const int64_t max_chunk_size) :
+SLB4MPI::WorkStealingLoadBalancer::WorkStealingLoadBalancer(const MPI_Comm communicator, const int64_t lower_bound, const int64_t upper_bound, const int64_t min_chunk_size, const int64_t max_chunk_size) :
   SLB4MPI::AbstractLoadBalancer::AbstractLoadBalancer(communicator, lower_bound, upper_bound, min_chunk_size, max_chunk_size) {
   int64_t n_tasks = (upper_bound - lower_bound + 1) / this->nranks;
   int64_t extra_tasks = (upper_bound - lower_bound + 1) % this->nranks;
@@ -30,7 +30,7 @@ SLB4MPI::WorkStealingLoadBalancer::WorkStealingLoadBalancer(const int communicat
   this->actual_rank = this->rank;
   this->done = false;
 
-  void * baseaddr_num_active, baseaddr_bounds;
+  void * baseaddr_num_active, * baseaddr_bounds;
 
   MPI_Win_allocate(sizeof(int), sizeof(int), MPI_INFO_NULL, this->communicator, baseaddr_num_active, &(this->window_num_active));
   MPI_Win_create(&(this->actual_rank), sizeof(int), sizeof(int), MPI_INFO_NULL, this->communicator, &(this->window_actual_rank));
@@ -80,8 +80,8 @@ bool SLB4MPI::WorkStealingLoadBalancer::get_range(int64_t& lower_bound, int64_t&
     MPI_Win_lock(MPI_LOCK_EXCLUSIVE, this->rank, 0, this->window_bounds);
     MPI_Get(&bounds, 2, MPI_INT64_T, this->rank, 0, 2, MPI_INT64_T, this->window_bounds);
     MPI_Win_flush(this->rank, this->window_bounds);
-    this->lower_bound = bound[0];
-    this->upper_bound = bound[1];
+    this->lower_bound = bounds[0];
+    this->upper_bound = bounds[1];
     lower_bound = this->lower_bound;
     upper_bound = std::min(lower_bound + this->max_chunk_size - 1, this->upper_bound);
     bounds[0] = upper_bound + 1;
@@ -92,6 +92,7 @@ bool SLB4MPI::WorkStealingLoadBalancer::get_range(int64_t& lower_bound, int64_t&
     if (upper_bound + 1 > this->upper_bound && !this->done) {
       MPI_Win_lock(MPI_LOCK_EXCLUSIVE, this->root, 0, this->window_num_active);
       int minus_one = -1;
+      int num_active;
       MPI_Fetch_and_op(&minus_one, &num_active, MPI_INT, this->root, 0, MPI_SUM, this->window_num_active);
       MPI_Win_unlock(this->root, this->window_num_active);
       this->actual_rank = (this->actual_rank + 1) % this->nranks;
@@ -111,10 +112,10 @@ bool SLB4MPI::WorkStealingLoadBalancer::get_range(int64_t& lower_bound, int64_t&
     MPI_Get(&compute_rank, 1, MPI_INT, this->actual_rank, 0, 1, MPI_INT, this->window_actual_rank);
     MPI_Win_unlock(this->actual_rank, this->window_actual_rank);
     // check that compute_rank computes itself
-    if (lb%actual_rank == compute_rank) {
+    if (this->actual_rank == compute_rank) {
       // check that there is something to steal
       MPI_Win_lock(MPI_LOCK_SHARED, this->actual_rank, MPI_MODE_NOCHECK, this->window_done);
-      MPI_Get(done, 1, MPI_CXX_BOOL, this->actual_rank, 0, 1, MPI_CXX_BOOL, this->window_done);
+      MPI_Get(&done, 1, MPI_CXX_BOOL, this->actual_rank, 0, 1, MPI_CXX_BOOL, this->window_done);
       MPI_Win_unlock(this->actual_rank, this->window_done);
       if (!done) {
         // try to steal min_chunk_size jobs from compute_rank
@@ -127,7 +128,7 @@ bool SLB4MPI::WorkStealingLoadBalancer::get_range(int64_t& lower_bound, int64_t&
         if (lower_bound <= upper_bound) to_compute = true;
         if (to_compute) {
           // update upper bound
-          call MPI_Accumulate(&bounds, 2, MPI_INT64_T, compute_rank, 0, 2, MPI_INT64_T, MPI_REPLACE, this->window_bounds);
+          MPI_Accumulate(&bounds, 2, MPI_INT64_T, compute_rank, 0, 2, MPI_INT64_T, MPI_REPLACE, this->window_bounds);
         }
         MPI_Win_unlock(compute_rank, this->window_bounds);
         if (to_compute) return to_compute;
@@ -135,11 +136,11 @@ bool SLB4MPI::WorkStealingLoadBalancer::get_range(int64_t& lower_bound, int64_t&
     } else {
       // switch to lb%actual_rank of compute_rank
       this->actual_rank = compute_rank;
-      if (lb%actual_rank == lb%rank) return false;
+      if (this->actual_rank == this->rank) return false;
       // but... to avoid infinity cycle, sometimes we will check that there is some jobs
       hop_count = hop_count + 1;
       {
-        float randval = rand();
+        float randval = 0.5;
         // log(nranks) <- how often to check cond (each 1, 2, 3, ..)
         // 1 / log(nranks) <- probability
         if (randval > (1. / std::log(static_cast<float>(this->nranks))) && hop_count < 20) continue;
@@ -154,7 +155,8 @@ bool SLB4MPI::WorkStealingLoadBalancer::get_range(int64_t& lower_bound, int64_t&
     this->actual_rank = (this->actual_rank + 1) % this->nranks;
     hop_count = 0;
     nohop_count = nohop_count + 1;
-    if (nohop_count > lb%nranks) return false;
+    if (nohop_count > this->nranks) return false;
   }
+  return false;
 #endif
 }

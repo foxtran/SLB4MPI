@@ -2,7 +2,7 @@
 
 #include <algorithm>
 
-SLB4MPI::GuidedLoadBalancer::GuidedLoadBalancer(const int communicator, const int64_t lower_bound, const int64_t upper_bound, const int64_t min_chunk_size, const int64_t max_chunk_size) :
+SLB4MPI::GuidedLoadBalancer::GuidedLoadBalancer(const MPI_Comm communicator, const int64_t lower_bound, const int64_t upper_bound, const int64_t min_chunk_size, const int64_t max_chunk_size) :
   SLB4MPI::AbstractLoadBalancer::AbstractLoadBalancer(communicator, lower_bound, upper_bound, min_chunk_size, max_chunk_size) {
   this->counter = this->lower_bound;
 

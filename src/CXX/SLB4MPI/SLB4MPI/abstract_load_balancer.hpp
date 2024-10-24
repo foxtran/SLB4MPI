@@ -8,13 +8,15 @@
 
 #ifdef SLB4MPI_WITH_MPI
 #  include <mpi.h>
+#else
+#  define MPI_Comm int
 #endif
 #include <cstdint>
 
 namespace SLB4MPI {
   class AbstractLoadBalancer {
     protected:
-      int communicator;       ///< MPI communicator
+      MPI_Comm communicator;  ///< MPI communicator
       int rank;               ///< Rank of the process
       int root;               ///< Rank of the root process
       int nranks;             ///< Number of processes (group size)
@@ -34,7 +36,7 @@ namespace SLB4MPI {
        * @param[in, optional] max_chunk_size - maximal size of chank that can be associated with job, default: upper_bound - lower_bound + 1
        *
        */
-      AbstractLoadBalancer(const int communicator, const int64_t lower_bound, const int64_t upper_bound, const int64_t min_chunk_size = 1, const int64_t max_chunk_size = -1);
+      AbstractLoadBalancer(const MPI_Comm communicator, const int64_t lower_bound, const int64_t upper_bound, const int64_t min_chunk_size = 1, const int64_t max_chunk_size = -1);
       /**
        *
        * @brief d-tor of AbstractLoadBalancer
