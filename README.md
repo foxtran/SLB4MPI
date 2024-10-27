@@ -151,21 +151,21 @@ If `max_chunk_size` is not specified, the iteration range is divided into chunks
 The load balancer is determing by `SLB4MPI_set_schedule` procedure.
 The list of possible values passed as string:
 - `env` (default) selects slice algorithm by `SLB4MPI_LOAD_BALANCER` environment variable;
-- `static` selects `static_load_balancer`;
-- `local_static` selects `local_static_load_balancer`;
-- `dynamic` selects `dynamic_load_balancer`;
-- `guided` selects `guided_load_balancer`;
-- `work_stealing` selects `work_stealing_load_balancer`.
+- `static` selects `static` load balancer;
+- `local_static` selects `local_static` load balancer;
+- `dynamic` selects `dynamic` load balancer;
+- `guided` selects `guided` load balancer;
+- `work_stealing` selects `work_stealing` load balancer.
 
 `SLB4MPI_LOAD_BALANCER` environment variable accepts the following values:
-- not set: runtime load balancer will use `static_load_balancer`
-- empty string: runtime load balancer will use `static_load_balancer`
-- `static`: runtime load balancer will use `static_load_balancer`
-- `local_static`: runtime load balancer will use `local_static_load_balancer`
-- `dynamic`: runtime load balancer will use `dynamic_load_balancer`
-- `guided`: runtime load balancer will use `guided_load_balancer`
-- `work_stealing`: runtime load balancer will use `work_stealing_load_balancer`
-- other values: runtime load balancer will use `static_load_balancer`
+- not set: runtime load balancer will use `static` load balancer;
+- empty string: runtime load balancer will use `static` load balancer;
+- `static`: runtime load balancer will use `static` load balancer;
+- `local_static`: runtime load balancer will use `local_static` load balancer;
+- `dynamic`: runtime load balancer will use `dynamic` load balancer;
+- `guided`: runtime load balancer will use `guided` load balancer;
+- `work_stealing`: runtime load balancer will use `work_stealing` load balancer;
+- other values: runtime load balancer will use `static` load balancer.
 
 
 ## Compilation process
