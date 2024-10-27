@@ -217,7 +217,6 @@ See example for [Fortran](examples/Fortran/CMakeLists.txt) and [C++](examples/CX
 ### OpenMPI
 
 - In Fortran, `clean` call is synchonization point. In C++, it is an end of scope containing load balancer(s).
-- With OpenMPI 4.1.X, C++ implementations of work stealing load balancer does not work.
 
 ### IntelMPI
 
