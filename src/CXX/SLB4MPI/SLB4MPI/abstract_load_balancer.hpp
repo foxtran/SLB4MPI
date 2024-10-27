@@ -16,14 +16,15 @@
 namespace SLB4MPI {
   class AbstractLoadBalancer {
     protected:
-      MPI_Comm communicator;  ///< MPI communicator
-      int rank;               ///< Rank of the process
-      int root;               ///< Rank of the root process
-      int nranks;             ///< Number of processes (group size)
-      int64_t lower_bound;    ///< Lower bound of range
-      int64_t upper_bound;    ///< Upper bound of range
-      int64_t min_chunk_size; ///< Minimal chunk size for job
-      int64_t max_chunk_size; ///< Maximal chunk size for job
+      MPI_Comm communicator;               ///< MPI communicator
+      int rank;                            ///< Rank of the process
+      int root;                            ///< Rank of the root process
+      int nranks;                          ///< Number of processes (group size)
+      int64_t bounds[2];                   ///< Bounds of range
+      int64_t& lower_bound = bounds[0];    ///< Lower bound of range
+      int64_t& upper_bound = bounds[1];    ///< Upper bound of range
+      int64_t min_chunk_size;              ///< Minimal chunk size for job
+      int64_t max_chunk_size;              ///< Maximal chunk size for job
     public:
       /**
        *
