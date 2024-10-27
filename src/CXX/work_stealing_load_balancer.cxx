@@ -35,7 +35,7 @@ SLB4MPI::WorkStealingLoadBalancer::WorkStealingLoadBalancer(const MPI_Comm commu
 
   MPI_Win_allocate(sizeof(int), sizeof(int), MPI_INFO_NULL, this->communicator, baseaddr, &(this->window_num_active));
   MPI_Win_create(&(this->actual_rank), sizeof(int), sizeof(int), MPI_INFO_NULL, this->communicator, &(this->window_actual_rank));
-  MPI_Win_allocate(2*sizeof(int64_t), sizeof(int64_t), MPI_INFO_NULL, this->communicator, baseaddr, &(this->window_bounds));
+  MPI_Win_create(&(this->bounds), 2*sizeof(int64_t), sizeof(int64_t), MPI_INFO_NULL, this->communicator, &(this->window_bounds));
   MPI_Win_create(&(this->done), sizeof(bool), sizeof(bool), MPI_INFO_NULL, this->communicator, &(this->window_done));
 
   if (this->rank == this->root) {
@@ -43,12 +43,6 @@ SLB4MPI::WorkStealingLoadBalancer::WorkStealingLoadBalancer(const MPI_Comm commu
     MPI_Put(&(this->nranks), 1, MPI_INT, this->root, 0, 1, MPI_INT, this->window_num_active);
     MPI_Win_unlock(this->root, this->window_num_active);
   }
-  std::array<int64_t,2> bounds;
-  bounds[0] = this->lower_bound;
-  bounds[1] = this->upper_bound;
-  MPI_Win_lock(MPI_LOCK_EXCLUSIVE, this->rank, 0, this->window_bounds);
-  MPI_Put(&bounds, 2, MPI_INT64_T, this->rank, 0, 2, MPI_INT64_T, this->window_bounds);
-  MPI_Win_unlock(this->rank, this->window_bounds);
 
   MPI_Barrier(this->communicator);
 #endif
@@ -75,22 +69,15 @@ bool SLB4MPI::WorkStealingLoadBalancer::get_range(int64_t& lower_bound, int64_t&
   if (lower_bound <= this->upper_bound) to_compute = true;
 
 #else
-  std::array<int64_t, 2> bounds;
   bool to_compute = false;
 
   if (this->actual_rank == this->rank) {
     to_compute = true;
     // select range for computing
     MPI_Win_lock(MPI_LOCK_EXCLUSIVE, this->rank, 0, this->window_bounds);
-    MPI_Get(&bounds, 2, MPI_INT64_T, this->rank, 0, 2, MPI_INT64_T, this->window_bounds);
-    MPI_Win_flush(this->rank, this->window_bounds);
-    this->lower_bound = bounds[0];
-    this->upper_bound = bounds[1];
     lower_bound = this->lower_bound;
     upper_bound = std::min(lower_bound + this->max_chunk_size - 1, this->upper_bound);
-    bounds[0] = upper_bound + 1;
-    // update lower bound
-    MPI_Accumulate(&bounds, 2, MPI_INT64_T, this->rank, 0, 2, MPI_INT64_T, MPI_REPLACE, this->window_bounds);
+    this->lower_bound = upper_bound + 1;
     MPI_Win_unlock(this->rank, this->window_bounds);
     // if it the last block, give that information in advance
     if (upper_bound + 1 > this->upper_bound && !this->done) {
