@@ -18,6 +18,7 @@ namespace SLB4MPI {
       MPI_Win window_actual_rank; ///< actual rank to compute (for fast look up)
       MPI_Win window_done;        ///< status of thread
       int actual_rank;            ///< rank for computing
+      int num_active;             ///< number of active ranks
       bool done;                  ///< does it compute all elements in its own rank? Implemented for non-blocking check with MPI_LOCK_SHARED
 #endif
     public:
