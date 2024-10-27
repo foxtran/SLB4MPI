@@ -30,19 +30,12 @@ SLB4MPI::WorkStealingLoadBalancer::WorkStealingLoadBalancer(const MPI_Comm commu
 #ifdef SLB4MPI_WITH_MPI
   this->actual_rank = this->rank;
   this->done = false;
+  this->num_active = this->nranks;
 
-  void * baseaddr;
-
-  MPI_Win_allocate(sizeof(int), sizeof(int), MPI_INFO_NULL, this->communicator, baseaddr, &(this->window_num_active));
+  MPI_Win_create(&(this->num_active), sizeof(int), sizeof(int), MPI_INFO_NULL, this->communicator, &(this->window_num_active));
   MPI_Win_create(&(this->actual_rank), sizeof(int), sizeof(int), MPI_INFO_NULL, this->communicator, &(this->window_actual_rank));
   MPI_Win_create(&(this->bounds), 2*sizeof(int64_t), sizeof(int64_t), MPI_INFO_NULL, this->communicator, &(this->window_bounds));
   MPI_Win_create(&(this->done), sizeof(bool), sizeof(bool), MPI_INFO_NULL, this->communicator, &(this->window_done));
-
-  if (this->rank == this->root) {
-    MPI_Win_lock(MPI_LOCK_EXCLUSIVE, this->root, 0, this->window_num_active);
-    MPI_Put(&(this->nranks), 1, MPI_INT, this->root, 0, 1, MPI_INT, this->window_num_active);
-    MPI_Win_unlock(this->root, this->window_num_active);
-  }
 
   MPI_Barrier(this->communicator);
 #endif
@@ -83,8 +76,7 @@ bool SLB4MPI::WorkStealingLoadBalancer::get_range(int64_t& lower_bound, int64_t&
     if (upper_bound + 1 > this->upper_bound && !this->done) {
       MPI_Win_lock(MPI_LOCK_EXCLUSIVE, this->root, 0, this->window_num_active);
       int minus_one = -1;
-      int num_active;
-      MPI_Fetch_and_op(&minus_one, &num_active, MPI_INT, this->root, 0, MPI_SUM, this->window_num_active);
+      MPI_Fetch_and_op(&minus_one, &(this->num_active), MPI_INT, this->root, 0, MPI_SUM, this->window_num_active);
       MPI_Win_unlock(this->root, this->window_num_active);
       this->actual_rank = (this->actual_rank + 1) % this->nranks;
       this->done = true;
@@ -141,11 +133,10 @@ bool SLB4MPI::WorkStealingLoadBalancer::get_range(int64_t& lower_bound, int64_t&
       }
     }
     // if could not steal job, check how many threads finished job
-    int num_active;
     MPI_Win_lock(MPI_LOCK_SHARED, this->root, 0, this->window_num_active);
-    MPI_Get(&num_active, 1, MPI_INT, this->root, 0, 1, MPI_INT, this->window_num_active);
+    MPI_Get(&(this->num_active), 1, MPI_INT, this->root, 0, 1, MPI_INT, this->window_num_active);
     MPI_Win_unlock(this->root, this->window_num_active);
-    if (num_active == 0) return false;
+    if (this->num_active == 0) return false;
     this->actual_rank = (this->actual_rank + 1) % this->nranks;
     hop_count = 0;
     nohop_count = nohop_count + 1;
