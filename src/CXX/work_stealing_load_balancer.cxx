@@ -90,7 +90,7 @@ bool SLB4MPI::WorkStealingLoadBalancer::get_range(int64_t& lower_bound, int64_t&
     int compute_rank;
     bool done;
     std::array<int64_t, 2> bounds;
-    // get rank which computes lb%actual_rank
+    // get rank which computes this->actual_rank
     MPI_Win_lock(MPI_LOCK_SHARED, this->actual_rank, MPI_MODE_NOCHECK, this->window_actual_rank);
     MPI_Get(&compute_rank, 1, MPI_INT, this->actual_rank, 0, 1, MPI_INT, this->window_actual_rank);
     MPI_Win_unlock(this->actual_rank, this->window_actual_rank);
@@ -117,7 +117,7 @@ bool SLB4MPI::WorkStealingLoadBalancer::get_range(int64_t& lower_bound, int64_t&
         if (to_compute) return to_compute;
       }
     } else {
-      // switch to lb%actual_rank of compute_rank
+      // switch to this->actual_rank of compute_rank
       this->actual_rank = compute_rank;
       if (this->actual_rank == this->rank) return false;
       // but... to avoid infinity cycle, sometimes we will check that there is some jobs

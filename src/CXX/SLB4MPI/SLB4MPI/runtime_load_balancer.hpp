@@ -38,7 +38,7 @@ namespace SLB4MPI {
       /**
        *
        * @brief get range to compute
-       * @note upper_bound can be only less than or equal RuntimeLoadBalancer.lb.upper_bound
+       * @note upper_bound can be only less than or equal RuntimeLoadBalancer.upper_bound
        *       so, for last elements a batch with size less than min_chunk_size can be returned
        *
        * @param[out] lower_bound - lower bound of range to compute
