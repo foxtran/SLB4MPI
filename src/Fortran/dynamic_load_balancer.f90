@@ -28,6 +28,7 @@ contains
   !>
   !> @brief initialize dynamic load balancer
   !>
+  !> @param[in,out] lb         - load balancer object
   !> @param[in] communicator   - MPI communicator on which load balancer will be used
   !> @param[in] lower_bound    - lower bound of range
   !> @param[in] upper_bound    - upper bound of range, upper_bound >= lower_bound
@@ -72,6 +73,7 @@ contains
   !> @note `upper_bound` can be only less than or equal `dynamic_load_balancer_t%upper_bound`.
   !>       So, for last elements a batch with size less than `min_chunk_size` can be returned
   !>
+  !> @param[in,out] lb       - load balancer object
   !> @param[out] lower_bound - lower bound of range to compute
   !> @param[out] upper_bound - upper bound of range to compute
   !> @return                 - true if there is something to compute
@@ -101,6 +103,8 @@ contains
 
   !>
   !> @brief dynamic load balancer destructor
+  !>
+  !> @param[in,out] lb - load balancer object
   !>
   subroutine clean(lb)
     class(dynamic_load_balancer_t), intent(inout) :: lb
