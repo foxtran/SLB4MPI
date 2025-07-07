@@ -30,7 +30,7 @@ module SLB4MPI_abstract_load_balancer_m
     procedure :: default_initialize
   end type
 
-  interface
+  abstract interface
 
     !>
     !> @brief initialize load balancer
