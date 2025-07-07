@@ -17,7 +17,7 @@ module SLB4MPI_runtime_load_balancer_m
   integer :: load_balancer_type = ENV_LOAD_BALANCER
 
   type, extends(load_balancer_t) :: runtime_load_balancer_t
-    class(load_balancer_t), allocatable :: balancer
+    class(load_balancer_t), allocatable :: balancer !< actual load balancer
   contains
     procedure :: initialize
     procedure :: get_range

@@ -12,10 +12,10 @@ module SLB4MPI_work_stealing_load_balancer_m
     integer(MPI_INTEGER_KIND) :: window_bounds      !< lower and upper bounds of rank
     integer(MPI_INTEGER_KIND) :: window_actual_rank !< actual rank to compute (for fast look up)
     integer(MPI_INTEGER_KIND) :: window_done        !< status of thread
-    integer(MPI_INTEGER_KIND) :: actual_rank
-    logical :: done = .false.
+    integer(MPI_INTEGER_KIND) :: actual_rank        !< value of actual rank
+    logical :: done = .false.                       !< task completed?
 #else
-    integer(MPI_INTEGER_KIND) :: counter
+    integer(MPI_INTEGER_KIND) :: counter            !< evaluation index
 #endif
   contains
     procedure :: initialize
