@@ -212,6 +212,17 @@ See example for [Fortran](examples/Fortran/CMakeLists.txt) and [C++](examples/CX
 **NOTE:** The library does not provide ILP64 support.
 
 
+## Building documentation
+
+To build documentation, you need to have installed [doxygen](https://www.doxygen.nl/index.html).
+
+With installed `doxygen`, run:
+```console
+doxygen DOXYGEN
+```
+to build documentation in html and latex formats.
+
+
 ## Notes about MPI implementations
 
 ### OpenMPI
