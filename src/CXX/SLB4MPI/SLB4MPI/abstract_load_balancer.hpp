@@ -30,11 +30,11 @@ namespace SLB4MPI {
        *
        * @brief initialize default values of abstract load balancer
        *
-       * @param[in]           communicator   - MPI communicator on which load balancer will be used
-       * @param[in]           lower_bound    - lower bound of range
-       * @param[in]           upper_bound    - upper bound of range, upper_bound >= lower_bound
-       * @param[in, optional] min_chunk_size - minimal size of chank that can be associated with job, default: 1
-       * @param[in, optional] max_chunk_size - maximal size of chank that can be associated with job, default: upper_bound - lower_bound + 1
+       * @param[in] communicator   - MPI communicator on which load balancer will be used
+       * @param[in] lower_bound    - lower bound of range
+       * @param[in] upper_bound    - upper bound of range, upper_bound >= lower_bound
+       * @param[in] min_chunk_size - minimal size of chank that can be associated with job, default: 1
+       * @param[in] max_chunk_size - maximal size of chank that can be associated with job, default: upper_bound - lower_bound + 1
        *
        */
       AbstractLoadBalancer(const MPI_Comm communicator, const int64_t lower_bound, const int64_t upper_bound, const int64_t min_chunk_size = 1, const int64_t max_chunk_size = -1);
