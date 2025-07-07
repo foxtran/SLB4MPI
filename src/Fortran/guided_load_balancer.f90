@@ -8,9 +8,9 @@ module SLB4MPI_guided_load_balancer_m
 
   type, extends(load_balancer_t) :: guided_load_balancer_t
 #ifdef SLB4MPI_WITH_MPI
-    integer(MPI_INTEGER_KIND) :: window
+    integer(MPI_INTEGER_KIND) :: window  !< sync window
 #else
-    integer(MPI_INTEGER_KIND) :: counter
+    integer(MPI_INTEGER_KIND) :: counter !< evaluation index
 #endif
   contains
     procedure :: initialize
