@@ -34,11 +34,11 @@ module SLB4MPI_abstract_load_balancer_m
     !>
     !> @brief initialize load balancer
     !>
-    !> @param[in]           communicator   - MPI communicator on which load balancer will be used
-    !> @param[in]           lower_bound    - lower bound of range
-    !> @param[in]           upper_bound    - upper bound of range, upper_bound >= lower_bound
-    !> @param[in, optional] min_chunk_size - minimal size of chank that can be associated with job, default: 1
-    !> @param[in, optional] max_chunk_size - maximal size of chank that can be associated with job, default: upper_bound - lower_bound + 1
+    !> @param[in] communicator   - MPI communicator on which load balancer will be used
+    !> @param[in] lower_bound    - lower bound of range
+    !> @param[in] upper_bound    - upper bound of range, upper_bound >= lower_bound
+    !> @param[in] min_chunk_size - minimal size of chank that can be associated with job, default: 1
+    !> @param[in] max_chunk_size - maximal size of chank that can be associated with job, default: upper_bound - lower_bound + 1
     !>
     subroutine initialize(lb, communicator, lower_bound, upper_bound, min_chunk_size, max_chunk_size)
       import load_balancer_t, MPI_INTEGER_KIND
@@ -51,12 +51,12 @@ module SLB4MPI_abstract_load_balancer_m
     !>
     !> @brief get range to compute
     !>
-    !> @note upper_bound can be only less than or equal load_balancer_t%upper_bound
-    !>       so, for last elements a batch with size less than min_chunk_size can be returned
+    !> @note `upper_bound` can be only less than or equal `load_balancer_t%upper_bound`.
+    !>       So, for last elements a batch with size less than `min_chunk_size` can be returned
     !>
     !> @param[out] lower_bound - lower bound of range to compute
     !> @param[out] upper_bound - upper bound of range to compute
-    !> @return                 - is there something to compute?
+    !> @return                 - true if there is something to compute
     !>
     logical function get_range(lb, lower_bound, upper_bound)
       import load_balancer_t
@@ -79,13 +79,13 @@ module SLB4MPI_abstract_load_balancer_m
 contains
 
   !>
-  !> @brief initialize variables of load balancer
+  !> @brief initialize variables of load balancer with default values
   !>
-  !> @param[in]           communicator   - MPI communicator on which load balancer will be used
-  !> @param[in]           lower_bound    - lower bound of range
-  !> @param[in]           upper_bound    - upper bound of range, upper_bound >= lower_bound
-  !> @param[in, optional] min_chunk_size - minimal size of chank that can be associated with job, default: 1
-  !> @param[in, optional] max_chunk_size - maximal size of chank that can be associated with job, default: upper_bound - lower_bound + 1
+  !> @param[in] communicator   - MPI communicator on which load balancer will be used
+  !> @param[in] lower_bound    - lower bound of range
+  !> @param[in] upper_bound    - upper bound of range, upper_bound >= lower_bound
+  !> @param[in] min_chunk_size - minimal size of chank that can be associated with job, default: 1
+  !> @param[in] max_chunk_size - maximal size of chank that can be associated with job, default: upper_bound - lower_bound + 1
   !>
   subroutine default_initialize(lb, communicator, lower_bound, upper_bound, min_chunk_size, max_chunk_size)
     class(load_balancer_t),    intent(inout) :: lb
