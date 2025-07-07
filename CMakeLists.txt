@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.22)
 
 project(SLB4MPI
-  VERSION 0.0.2
+  VERSION 0.0.3
   DESCRIPTION "Simple load balancers for MPI")
 
 option(SLB4MPI_ENABLE_CXX     "Enable C++-implemented load balancer"     OFF)
