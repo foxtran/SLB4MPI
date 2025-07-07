@@ -15,12 +15,12 @@ Initialization can be done in the following manner, for example (`StaticLoadBala
 ```cpp
 #include <SLB4MPI.h>
 ...
-StaticLoadBalancer slb(MPI_COMM_WORLD, 1, 100, 2, 4);
+StaticLoadBalancer slb(mpi_comm, 1, 100, 2, 4);
 ```
-That will initialize load balancer `slb`  with range from lower bound (`1`) to upper bound (`100`) and with min (`2`) and max (`4`) chunk sizes which are optional which will work on communicator `comm`.
+That will initialize load balancer `slb`  with range from lower bound (`1`) to upper bound (`100`) and with min (`2`) and max (`4`) chunk sizes which are optional which will work on communicator `mpi_comm`.
 Simpler initialization is also possible with default min and max chuck sizes:
 ```cpp
-StaticLoadBalancer slb(MPI_COMM_WORLD, 1, 100);
+StaticLoadBalancer slb(mpi_comm, 1, 100);
 ```
 This is a barrier for the whole communicator.
 
@@ -39,7 +39,7 @@ Internally, it uses RAII, so it most of cases you do not think about destructing
 For `Runtime` load balancer, a proper load balancer must be specified via first argument during initialization:
 ```cpp
 std::string rlbtype = std::string("dynamic");
-RuntimeLoadBalancer rlb(rlbtype, MPI_COMM_WORLD, 1, 100, 2, 4);
+RuntimeLoadBalancer rlb(rlbtype, mpi_comm, 1, 100, 2, 4);
 ```
 See possible values in the next section.
 
