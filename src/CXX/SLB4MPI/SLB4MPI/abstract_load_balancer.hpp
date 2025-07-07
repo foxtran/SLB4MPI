@@ -47,14 +47,14 @@ namespace SLB4MPI {
       /**
        *
        * @brief get range to compute
-       * @note upper_bound can be only less than or equal <Any>LoadBalancer%upper_bound
-       *       so, for last elements a batch with size less than min_chunk_size can be returned
+       * @note `upper_bound` can be only less than or equal `AbstractLoadBalancer.upper_bound`.
+       *       So, for last elements a batch with size less than `min_chunk_size` can be returned
        *
        * @param[out] lower_bound - lower bound of range to compute
        * @param[out] upper_bound - upper bound of range to compute
-       * @return                 - is there something to compute?
+       * @return                 - true if there is something to compute
        *
        */
-      virtual bool get_range(int64_t&, int64_t&) = 0;
+      virtual bool get_range(int64_t& lower_bound, int64_t& upper_bound) = 0;
   };
 }
