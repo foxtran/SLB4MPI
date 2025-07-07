@@ -42,7 +42,7 @@ DOXYFILE_ENCODING      = UTF-8
 # title of most generated pages and in a few other places.
 # The default value is: My Project.
 
-PROJECT_NAME           = "My Project"
+PROJECT_NAME           = "SLB4MPI"
 
 # The PROJECT_NUMBER tag can be used to enter a project or revision number. This
 # could be handy for archiving the generated documentation or if some version
@@ -54,7 +54,7 @@ PROJECT_NUMBER         =
 # for a project that appears at the top of each page and should give viewers a
 # quick idea about the purpose of the project. Keep the description short.
 
-PROJECT_BRIEF          =
+PROJECT_BRIEF          = "Simple load balancers for MPI"
 
 # With the PROJECT_LOGO tag one can specify a logo or an icon that is included
 # in the documentation. The maximum height of the logo should not exceed 55
@@ -74,7 +74,7 @@ PROJECT_ICON           =
 # entered, it will be relative to the location where Doxygen was started. If
 # left blank the current directory will be used.
 
-OUTPUT_DIRECTORY       =
+OUTPUT_DIRECTORY       = docs/
 
 # If the CREATE_SUBDIRS tag is set to YES then Doxygen will create up to 4096
 # sub-directories (in 2 levels) under the output directory of each output format
@@ -312,7 +312,7 @@ OPTIMIZE_OUTPUT_JAVA   = NO
 # sources. Doxygen will then generate output that is tailored for Fortran.
 # The default value is: NO.
 
-OPTIMIZE_FOR_FORTRAN   = NO
+OPTIMIZE_FOR_FORTRAN   = YES
 
 # Set the OPTIMIZE_OUTPUT_VHDL tag to YES if your project consists of VHDL
 # sources. Doxygen will then generate output that is tailored for VHDL.
@@ -1032,61 +1032,25 @@ INPUT_FILE_ENCODING    =
 # *.f18, *.f, *.for, *.vhd, *.vhdl, *.ucf, *.qsf and *.ice.
 
 FILE_PATTERNS          = *.c \
-                         *.cc \
                          *.cxx \
-                         *.cxxm \
                          *.cpp \
-                         *.cppm \
-                         *.ccm \
-                         *.c++ \
-                         *.c++m \
-                         *.java \
-                         *.ii \
-                         *.ixx \
-                         *.ipp \
-                         *.i++ \
-                         *.inl \
-                         *.idl \
-                         *.ddl \
-                         *.odl \
                          *.h \
-                         *.hh \
                          *.hxx \
                          *.hpp \
-                         *.h++ \
-                         *.l \
-                         *.cs \
-                         *.d \
-                         *.php \
-                         *.php4 \
-                         *.php5 \
-                         *.phtml \
-                         *.inc \
-                         *.m \
-                         *.markdown \
                          *.md \
-                         *.mm \
-                         *.dox \
-                         *.py \
-                         *.pyw \
                          *.f90 \
                          *.f95 \
                          *.f03 \
                          *.f08 \
                          *.f18 \
                          *.f \
-                         *.for \
-                         *.vhd \
-                         *.vhdl \
-                         *.ucf \
-                         *.qsf \
-                         *.ice
+                         *.for
 
 # The RECURSIVE tag can be used to specify whether or not subdirectories should
 # be searched for input files as well.
 # The default value is: NO.
 
-RECURSIVE              = NO
+RECURSIVE              = YES
 
 # The EXCLUDE tag can be used to specify files and/or directories that should be
 # excluded from the INPUT source files. This way you can easily exclude a
@@ -1125,21 +1089,21 @@ EXCLUDE_SYMBOLS        =
 # that contain example code fragments that are included (see the \include
 # command).
 
-EXAMPLE_PATH           =
+EXAMPLE_PATH           = examples/
 
 # If the value of the EXAMPLE_PATH tag contains directories, you can use the
 # EXAMPLE_PATTERNS tag to specify one or more wildcard pattern (like *.cpp and
 # *.h) to filter out the source-files in the directories. If left blank all
 # files are included.
 
-EXAMPLE_PATTERNS       = *
+EXAMPLE_PATTERNS       = examples/*
 
 # If the EXAMPLE_RECURSIVE tag is set to YES then subdirectories will be
 # searched for input files to be used with the \include or \dontinclude commands
 # irrespective of the value of the RECURSIVE tag.
 # The default value is: NO.
 
-EXAMPLE_RECURSIVE      = NO
+EXAMPLE_RECURSIVE      = YES
 
 # The IMAGE_PATH tag can be used to specify one or more files or directories
 # that contain images that are to be included in the documentation (see the
