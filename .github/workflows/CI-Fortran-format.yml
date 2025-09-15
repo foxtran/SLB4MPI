@@ -1,0 +1,23 @@
+name: CI-Fortran-format
+
+on:
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+
+    steps:
+    - uses: actions/checkout@v4
+    - uses: foxtran/setup-codee@v1
+
+    - name: Run Fortran formatter
+      run: |
+        codee format . --verbose
+
+    - name: Check for uncommitted changes
+      run: |
+        git diff --exit-code
