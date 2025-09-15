@@ -15,20 +15,20 @@ module SLB4MPI_abstract_load_balancer_m
 
   type, abstract :: load_balancer_t
     integer(MPI_INTEGER_KIND) :: communicator !< MPI communicator
-    integer(MPI_INTEGER_KIND) :: rank         !< Rank of the process
-    integer(MPI_INTEGER_KIND) :: root = 0     !< Rank of the root process
-    integer(MPI_INTEGER_KIND) :: nranks       !< Number of processes (group size)
-    integer(8) :: lower_bound                 !< Lower bound of range
-    integer(8) :: upper_bound                 !< Upper bound of range
-    integer(8) :: min_chunk_size              !< Minimal chunk size for job
-    integer(8) :: max_chunk_size              !< Maximal chunk size for job
-  contains
+    integer(MPI_INTEGER_KIND) :: rank !< Rank of the process
+    integer(MPI_INTEGER_KIND) :: root = 0 !< Rank of the root process
+    integer(MPI_INTEGER_KIND) :: nranks !< Number of processes (group size)
+    integer(8) :: lower_bound !< Lower bound of range
+    integer(8) :: upper_bound !< Upper bound of range
+    integer(8) :: min_chunk_size !< Minimal chunk size for job
+    integer(8) :: max_chunk_size !< Maximal chunk size for job
+    contains
     procedure(initialize), deferred, public :: initialize
-    procedure(get_range),  deferred, public :: get_range
-    procedure(clean),      deferred, public :: clean
+    procedure(get_range), deferred, public :: get_range
+    procedure(clean), deferred, public :: clean
 
     procedure :: default_initialize
-  end type
+  end type load_balancer_t
 
   abstract interface
 
@@ -44,10 +44,10 @@ module SLB4MPI_abstract_load_balancer_m
     !>
     subroutine initialize(lb, communicator, lower_bound, upper_bound, min_chunk_size, max_chunk_size)
       import load_balancer_t, MPI_INTEGER_KIND
-      class(load_balancer_t),    intent(inout) :: lb
-      integer(MPI_INTEGER_KIND), intent(in)    :: communicator
-      integer(8),                intent(in)    :: lower_bound, upper_bound
-      integer(8),      optional, intent(in)    :: min_chunk_size, max_chunk_size
+      class(load_balancer_t), intent(inout) :: lb
+      integer(MPI_INTEGER_KIND), intent(in) :: communicator
+      integer(8), intent(in) :: lower_bound, upper_bound
+      integer(8), optional, intent(in) :: min_chunk_size, max_chunk_size
     end subroutine initialize
 
     !>
@@ -64,7 +64,7 @@ module SLB4MPI_abstract_load_balancer_m
     logical function get_range(lb, lower_bound, upper_bound)
       import load_balancer_t
       class(load_balancer_t), intent(inout) :: lb
-      integer(8),             intent(out)   :: lower_bound, upper_bound
+      integer(8), intent(out) :: lower_bound, upper_bound
     end function get_range
 
     !>
@@ -94,10 +94,10 @@ contains
   !> @param[in] max_chunk_size - maximal size of chank that can be associated with job, default: upper_bound - lower_bound + 1
   !>
   subroutine default_initialize(lb, communicator, lower_bound, upper_bound, min_chunk_size, max_chunk_size)
-    class(load_balancer_t),    intent(inout) :: lb
-    integer(MPI_INTEGER_KIND), intent(in)    :: communicator
-    integer(8),                intent(in)    :: lower_bound, upper_bound
-    integer(8),      optional, intent(in)    :: min_chunk_size, max_chunk_size
+    class(load_balancer_t), intent(inout) :: lb
+    integer(MPI_INTEGER_KIND), intent(in) :: communicator
+    integer(8), intent(in) :: lower_bound, upper_bound
+    integer(8), optional, intent(in) :: min_chunk_size, max_chunk_size
 
     integer(MPI_INTEGER_KIND) :: ierr
 

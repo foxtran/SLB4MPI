@@ -8,15 +8,15 @@ module SLB4MPI_guided_load_balancer_m
 
   type, extends(load_balancer_t) :: guided_load_balancer_t
 #ifdef SLB4MPI_WITH_MPI
-    integer(MPI_INTEGER_KIND) :: window  !< sync window
+    integer(MPI_INTEGER_KIND) :: window !< sync window
 #else
     integer(MPI_INTEGER_KIND) :: counter !< evaluation index
 #endif
-  contains
+    contains
     procedure :: initialize
     procedure :: get_range
     procedure :: clean
-  end type
+  end type guided_load_balancer_t
 
   interface
 
@@ -38,9 +38,9 @@ contains
   subroutine initialize(lb, communicator, lower_bound, upper_bound, min_chunk_size, max_chunk_size)
     use, intrinsic :: iso_c_binding, only: c_ptr, c_f_pointer
     class(guided_load_balancer_t), intent(inout) :: lb
-    integer(MPI_INTEGER_KIND),      intent(in)    :: communicator
-    integer(8),                     intent(in)    :: lower_bound, upper_bound
-    integer(8),           optional, intent(in)    :: min_chunk_size, max_chunk_size
+    integer(MPI_INTEGER_KIND), intent(in) :: communicator
+    integer(8), intent(in) :: lower_bound, upper_bound
+    integer(8), optional, intent(in) :: min_chunk_size, max_chunk_size
 
     integer(MPI_ADDRESS_KIND) :: size
     integer(MPI_INTEGER_KIND) :: disp_unit, ierr
@@ -89,7 +89,8 @@ contains
 
 #ifdef SLB4MPI_WITH_MPI
     call MPI_Win_lock(MPI_LOCK_EXCLUSIVE, lb%root, 0_MPI_INTEGER_KIND, lb%window, ierr)
-    call MPI_Get(root_counter, 1_MPI_INTEGER_KIND, MPI_INTEGER8, lb%root, 0_MPI_ADDRESS_KIND, 1_MPI_INTEGER_KIND, MPI_INTEGER8, lb%window, ierr)
+    call MPI_Get(root_counter, 1_MPI_INTEGER_KIND, MPI_INTEGER8, lb%root, 0_MPI_ADDRESS_KIND, 1_MPI_INTEGER_KIND, MPI_INTEGER8, &
+        lb%window, ierr)
     call MPI_Win_flush(lb%root, lb%window, ierr)
     associated_tasks = min(max((lb%upper_bound - root_counter) / lb%nranks, lb%min_chunk_size), lb%max_chunk_size)
     call MPI_Fetch_and_op(associated_tasks, lower_bound, MPI_INTEGER8, lb%root, 0_MPI_ADDRESS_KIND, MPI_SUM, lb%window, ierr)

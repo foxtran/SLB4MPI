@@ -18,11 +18,11 @@ module SLB4MPI_runtime_load_balancer_m
 
   type, extends(load_balancer_t) :: runtime_load_balancer_t
     class(load_balancer_t), allocatable :: balancer !< actual load balancer
-  contains
+    contains
     procedure :: initialize
     procedure :: get_range
     procedure :: clean
-  end type
+  end type runtime_load_balancer_t
 
   interface
 
@@ -45,42 +45,42 @@ contains
   subroutine initialize(lb, communicator, lower_bound, upper_bound, min_chunk_size, max_chunk_size)
     use, intrinsic :: iso_c_binding, only: c_ptr, c_f_pointer
     class(runtime_load_balancer_t), intent(inout) :: lb
-    integer(MPI_INTEGER_KIND),      intent(in)    :: communicator
-    integer(8),                     intent(in)    :: lower_bound, upper_bound
-    integer(8),           optional, intent(in)    :: min_chunk_size, max_chunk_size
+    integer(MPI_INTEGER_KIND), intent(in) :: communicator
+    integer(8), intent(in) :: lower_bound, upper_bound
+    integer(8), optional, intent(in) :: min_chunk_size, max_chunk_size
 
     if (load_balancer_type == ENV_LOAD_BALANCER) then
-    block
-      use, intrinsic :: iso_fortran_env, only: error_unit
-      character(len=80) :: envval
-      logical :: ok
-      call get_environment_variable("SLB4MPI_LOAD_BALANCER", envval)
-      call SLB4MPI_set_schedule(trim(envval), ok)
-      if (len_trim(envval) /= 0 .and. (.not.ok .or. trim(envval) == 'env')) then
-        write(error_unit, '(A)') "SLB4MPI_LOAD_BALANCER environmental variable is not set properly!"
-        write(error_unit, '(A)') "Actual value is '" // trim(envval) // "'"
-        write(error_unit, '(A)') "Possible values are: static, local_static, dynamic, guided, work_stealing"
-        write(error_unit, '(A)') "static load balancer will be used!"
-        call SLB4MPI_set_schedule("static")
-      else if (len_trim(envval) == 0) then
-        call SLB4MPI_set_schedule("static")
-      end if
-    end block
+      block
+        use, intrinsic :: iso_fortran_env, only: error_unit
+        character(len=80) :: envval
+        logical :: ok
+        call get_environment_variable("SLB4MPI_LOAD_BALANCER", envval)
+        call SLB4MPI_set_schedule(trim(envval), ok)
+        if (len_trim(envval) /= 0 .and. (.not.ok .or. trim(envval) == 'env')) then
+          write(error_unit, '(A)') "SLB4MPI_LOAD_BALANCER environmental variable is not set properly!"
+          write(error_unit, '(A)') "Actual value is '" // trim(envval) // "'"
+          write(error_unit, '(A)') "Possible values are: static, local_static, dynamic, guided, work_stealing"
+          write(error_unit, '(A)') "static load balancer will be used!"
+          call SLB4MPI_set_schedule("static")
+        else if (len_trim(envval) == 0) then
+          call SLB4MPI_set_schedule("static")
+        end if
+      end block
     end if
 
     select case (load_balancer_type)
-      case(STATIC_LOAD_BALANCER)
-        allocate(static_load_balancer_t :: lb%balancer)
-      case(LOCAL_STATIC_LOAD_BALANCER)
-        allocate(local_static_load_balancer_t :: lb%balancer)
-      case(DYNAMIC_LOAD_BALANCER)
-        allocate(dynamic_load_balancer_t :: lb%balancer)
-      case(GUIDED_LOAD_BALANCER)
-        allocate(guided_load_balancer_t :: lb%balancer)
-      case(WORK_STEALING_LOAD_BALANCER)
-        allocate(work_stealing_load_balancer_t :: lb%balancer)
-      case default
-        error stop "Unknown load balancer"
+    case (STATIC_LOAD_BALANCER)
+      allocate(static_load_balancer_t :: lb%balancer)
+    case (LOCAL_STATIC_LOAD_BALANCER)
+      allocate(local_static_load_balancer_t :: lb%balancer)
+    case (DYNAMIC_LOAD_BALANCER)
+      allocate(dynamic_load_balancer_t :: lb%balancer)
+    case (GUIDED_LOAD_BALANCER)
+      allocate(guided_load_balancer_t :: lb%balancer)
+    case (WORK_STEALING_LOAD_BALANCER)
+      allocate(work_stealing_load_balancer_t :: lb%balancer)
+    case default
+      error stop "Unknown load balancer"
     end select
 
     call lb%balancer%initialize(communicator, lower_bound, upper_bound, min_chunk_size, max_chunk_size)
@@ -125,21 +125,21 @@ contains
     logical, optional, intent(out) :: ok
     logical :: ok_
     ok_ = .true.
-    select case(lbtype)
-      case ("env")
-        load_balancer_type = ENV_LOAD_BALANCER
-      case ("static")
-        load_balancer_type = STATIC_LOAD_BALANCER
-      case ("local_static")
-        load_balancer_type = LOCAL_STATIC_LOAD_BALANCER
-      case ("dynamic")
-        load_balancer_type = DYNAMIC_LOAD_BALANCER
-      case ("guided")
-        load_balancer_type = GUIDED_LOAD_BALANCER
-      case ("work_stealing")
-        load_balancer_type = WORK_STEALING_LOAD_BALANCER
-      case default
-        ok_ = .false.
+    select case (lbtype)
+    case ("env")
+      load_balancer_type = ENV_LOAD_BALANCER
+    case ("static")
+      load_balancer_type = STATIC_LOAD_BALANCER
+    case ("local_static")
+      load_balancer_type = LOCAL_STATIC_LOAD_BALANCER
+    case ("dynamic")
+      load_balancer_type = DYNAMIC_LOAD_BALANCER
+    case ("guided")
+      load_balancer_type = GUIDED_LOAD_BALANCER
+    case ("work_stealing")
+      load_balancer_type = WORK_STEALING_LOAD_BALANCER
+    case default
+      ok_ = .false.
     end select
     if (present(ok)) ok = ok_
   end subroutine SLB4MPI_set_schedule

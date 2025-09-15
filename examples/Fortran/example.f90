@@ -19,16 +19,16 @@ program main
   do
     if (.not.lb%get_range(bot, top)) exit
     do j = bot, top
-    block
-      real(8), allocatable :: a(:,:), b(:,:), c(:,:)
-      i = 3 * (100 - j) + 200
-      allocate(a(i,i),b(i,i),c(i,i))
-      call random_number(a)
-      call random_number(b)
-      c = matmul(a,b)
-      write(7,'(I6,ES15.8)') j, sum(c)
-      deallocate(a,b,c)
-    end block
+      block
+        real(8), allocatable :: a(:, :), b(:, :), c(:, :)
+        i = 3 * (100 - j) + 200
+        allocate(a(i, i), b(i, i), c(i, i))
+        call random_number(a)
+        call random_number(b)
+        c = matmul(a, b)
+        write(7, '(I6,ES15.8)') j, sum(c)
+        deallocate(a, b, c)
+      end block
     end do
   end do
   print '(A)', "Done!"
