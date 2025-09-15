@@ -8,15 +8,15 @@ module SLB4MPI_dynamic_load_balancer_m
 
   type, extends(load_balancer_t) :: dynamic_load_balancer_t
 #ifdef SLB4MPI_WITH_MPI
-    integer(MPI_INTEGER_KIND) :: window  !< sync window
+    integer(MPI_INTEGER_KIND) :: window !< sync window
 #else
     integer(MPI_INTEGER_KIND) :: counter !< evaluation index
 #endif
-  contains
+    contains
     procedure :: initialize
     procedure :: get_range
     procedure :: clean
-  end type
+  end type dynamic_load_balancer_t
 
   interface
 
@@ -38,9 +38,9 @@ contains
   subroutine initialize(lb, communicator, lower_bound, upper_bound, min_chunk_size, max_chunk_size)
     use, intrinsic :: iso_c_binding, only: c_ptr, c_f_pointer
     class(dynamic_load_balancer_t), intent(inout) :: lb
-    integer(MPI_INTEGER_KIND),      intent(in)    :: communicator
-    integer(8),                     intent(in)    :: lower_bound, upper_bound
-    integer(8),           optional, intent(in)    :: min_chunk_size, max_chunk_size
+    integer(MPI_INTEGER_KIND), intent(in) :: communicator
+    integer(8), intent(in) :: lower_bound, upper_bound
+    integer(8), optional, intent(in) :: min_chunk_size, max_chunk_size
 
     integer(MPI_ADDRESS_KIND) :: size
     integer(MPI_INTEGER_KIND) :: disp_unit, ierr

@@ -6,11 +6,11 @@ module SLB4MPI_static_load_balancer_m
   type, extends(load_balancer_t) :: static_load_balancer_t
     private
     integer(8) :: counter
-  contains
+    contains
     procedure :: initialize
     procedure :: get_range
     procedure :: clean
-  end type
+  end type static_load_balancer_t
 
   interface
 
@@ -31,9 +31,9 @@ contains
   !>
   subroutine initialize(lb, communicator, lower_bound, upper_bound, min_chunk_size, max_chunk_size)
     class(static_load_balancer_t), intent(inout) :: lb
-    integer(MPI_INTEGER_KIND),     intent(in)    :: communicator
-    integer(8),                    intent(in)    :: lower_bound, upper_bound
-    integer(8),          optional, intent(in)    :: min_chunk_size, max_chunk_size
+    integer(MPI_INTEGER_KIND), intent(in) :: communicator
+    integer(8), intent(in) :: lower_bound, upper_bound
+    integer(8), optional, intent(in) :: min_chunk_size, max_chunk_size
 
     call lb%default_initialize(communicator, lower_bound, upper_bound, min_chunk_size, max_chunk_size)
 
@@ -54,7 +54,7 @@ contains
   !>
   logical function get_range(lb, lower_bound, upper_bound) result(to_compute)
     class(static_load_balancer_t), intent(inout) :: lb
-    integer(8),                    intent(out)   :: lower_bound, upper_bound
+    integer(8), intent(out) :: lower_bound, upper_bound
 
     to_compute = .true.
 

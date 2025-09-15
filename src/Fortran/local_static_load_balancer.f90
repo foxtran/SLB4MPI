@@ -6,11 +6,11 @@ module SLB4MPI_local_static_load_balancer_m
   type, extends(load_balancer_t) :: local_static_load_balancer_t
     private
     integer(8) :: counter
-  contains
+    contains
     procedure :: initialize
     procedure :: get_range
     procedure :: clean
-  end type
+  end type local_static_load_balancer_t
 
   interface
 
@@ -31,9 +31,9 @@ contains
   !>
   subroutine initialize(lb, communicator, lower_bound, upper_bound, min_chunk_size, max_chunk_size)
     class(local_static_load_balancer_t), intent(inout) :: lb
-    integer(MPI_INTEGER_KIND),           intent(in)    :: communicator
-    integer(8),                          intent(in)    :: lower_bound, upper_bound
-    integer(8),                optional, intent(in)    :: min_chunk_size, max_chunk_size
+    integer(MPI_INTEGER_KIND), intent(in) :: communicator
+    integer(8), intent(in) :: lower_bound, upper_bound
+    integer(8), optional, intent(in) :: min_chunk_size, max_chunk_size
     !
     integer(8) :: n_tasks, extra_tasks
 
@@ -42,16 +42,16 @@ contains
     n_tasks = (upper_bound - lower_bound + 1) / lb%nranks
     extra_tasks = mod(upper_bound - lower_bound + 1, lb%nranks)
     if (n_tasks < min_chunk_size) then
-        n_tasks = min_chunk_size
-        extra_tasks = 0
+      n_tasks = min_chunk_size
+      extra_tasks = 0
     end if
 
     if (lb%rank < extra_tasks) then
-        lb%lower_bound = lb%rank * (n_tasks + 1) + lower_bound
-        lb%upper_bound = (lb%rank + 1) * (n_tasks + 1) + lower_bound - 1
+      lb%lower_bound = lb%rank * (n_tasks + 1) + lower_bound
+      lb%upper_bound = (lb%rank + 1) * (n_tasks + 1) + lower_bound - 1
     else
-        lb%lower_bound = lb%rank * n_tasks + extra_tasks + lower_bound
-        lb%upper_bound = (lb%rank + 1) * n_tasks + extra_tasks + lower_bound - 1
+      lb%lower_bound = lb%rank * n_tasks + extra_tasks + lower_bound
+      lb%upper_bound = (lb%rank + 1) * n_tasks + extra_tasks + lower_bound - 1
     end if
 
     lb%lower_bound = min(lb%lower_bound, upper_bound + 1)
@@ -74,7 +74,7 @@ contains
   !>
   logical function get_range(lb, lower_bound, upper_bound) result(to_compute)
     class(local_static_load_balancer_t), intent(inout) :: lb
-    integer(8),                          intent(out)   :: lower_bound, upper_bound
+    integer(8), intent(out) :: lower_bound, upper_bound
 
     to_compute = .true.
 
